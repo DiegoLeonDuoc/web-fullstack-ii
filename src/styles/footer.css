@@ -1,0 +1,204 @@
+.footer-custom{
+	background: #050606;
+	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.12);
+	box-sizing: border-box;
+	width: 100%;
+	font: bold 16px sans-serif;
+	text-align: left;
+	padding: 50px 60px 40px;
+	/* allow contents to wrap instead of being clipped */
+	overflow: visible;
+	/* make footer a flex row that wraps on small widths */
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 30px;
+	/* prevent footer from shrinking when using body as column flex */
+	flex-shrink: 0;
+}
+
+.footer-custom .footer-izq{
+	/* stop floating — use flex instead */
+	float: none;
+	flex: 1 1 320px;
+	min-width: 260px;
+}
+
+.footer-custom h3{
+	color:  #ffffff;
+	font: normal 36px 'Roboto', sans-serif;
+	margin: 0 0 10px;
+}
+
+.footer-custom h3 span{
+	color:  #5383d3;
+}
+
+.footer-custom .footer-links{
+	color:  #ffffff;
+	margin: 0 0 10px;
+	padding: 0;
+}
+
+.footer-custom .footer-links a{
+	display:inline-block;
+	line-height: 1.8;
+	text-decoration: none;
+	color:  inherit;
+}
+
+.footer-custom .footer-company-name{
+	color:  #8f9296;
+	font-size: 14px;
+	font-weight: normal;
+	margin: 0;
+}
+
+.footer-custom .footer-iconos{
+	margin-top: 40px;
+	/* keep icons row inside left column */
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.footer-custom .footer-iconos a{
+	display: inline-block;
+	width: 35px;
+	height: 35px;
+	cursor: pointer;
+	background-color: transparent;
+	border-radius: 2px;
+	font-size: 20px;
+	color: #ffffff;
+	text-align: center;
+	line-height: 35px;
+	margin-right: 3px;
+	margin-bottom: 5px;
+	flex-shrink: 0;
+}
+
+.footer-custom .footer-right{
+	flex: 0 0 0px;
+	min-width: 460px;
+	align-self: flex-end;
+}
+
+.footer-custom .footer-right p{
+	display: inline-block;
+	vertical-align: top;
+	margin: 15px 42px 0 0;
+	color: #ffffff;
+}
+
+.footer-custom form{
+	/* switch to block so inputs take full available width of the column */
+	display: block;
+}
+
+.footer-custom form input,
+.footer-custom form textarea{
+	display: block;
+	border-radius: 3px;
+	box-sizing: border-box;
+	background-color:  #1a1b1f;
+	box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.1);
+	border: none;
+	resize: none;
+	font: inherit;
+	font-size: 14px;
+	font-weight: normal;
+	color:  #d1d2d2;
+	/* make inputs responsive inside the flex column */
+	width: 100%;
+	max-width: 400px;
+	padding: 18px;
+}
+
+.footer-custom ::-webkit-input-placeholder {
+	color:  #5c666b;
+}
+
+.footer-custom ::-moz-placeholder {
+	color:  #5c666b;
+	opacity: 1;
+}
+
+.footer-custom :-ms-input-placeholder{
+	color:  #5c666b;
+}
+
+.footer-custom form input{
+	height: 55px;
+	margin-bottom: 15px;
+}
+
+.footer-custom form textarea{
+	height: 100px;
+	margin-bottom: 20px;
+}
+
+.footer-custom form button{
+	border-radius: 3px;
+	background-color:  #1a1b1f;
+	color: #ffffff;
+	border: 0;
+	padding: 15px 50px;
+	font-weight: bold;
+	/* keep button aligned to the right inside the form, but allow wrap on small screens */
+	display: inline-block;
+}
+
+/* responsive tweaks */
+@media (max-width: 1000px) {
+
+	.footer-custom {
+		font: bold 14px sans-serif;
+	}
+
+	.footer-custom .footer-company-name{
+		font-size: 12px;
+	}
+
+	.footer-custom form input,
+	.footer-custom form textarea{
+		max-width: 250px;
+		width: 100%;
+	}
+
+	.footer-custom form button{
+		padding: 10px 35px;
+	}
+
+}
+
+@media (max-width: 800px) {
+
+	.footer-custom{
+		padding: 30px;
+		/* center stacked columns */
+		align-items: center;
+	}
+
+	.footer-custom .footer-izq,
+	.footer-custom .footer-right{
+		flex: 1 1 100%;
+		max-width: 600px;
+		margin: 0 auto;
+	}
+
+	.footer-custom .footer-izq{
+		margin-bottom: 40px;
+	}
+
+	.footer-custom form{
+		margin-top: 30px;
+		display: block;
+	}
+
+	.footer-custom form button{
+		float: none;
+		display: block;
+		margin-left: auto;
+	}
+}
