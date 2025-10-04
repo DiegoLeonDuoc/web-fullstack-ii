@@ -11,7 +11,7 @@ const FilaDeProductos = ({productos}) => {
 
   return (
     <div className="fila-productos">
-      <Row className="flex-nowrap">
+      <Row id="fila">
         { productos.map((producto, idx) => (
           <Col id='col-prod' key={idx}>
             <div className="card">

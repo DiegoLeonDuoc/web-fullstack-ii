@@ -7,50 +7,53 @@
 
 .card{
   position: absolute;
-  width: 300px;
-  height: 300px;
+  width: 100%;
   overflow: hidden;
+  border: none;
 }
 
 .card-body {
   text-align: left;
-  margin-left: calc(var(--collection-product-padding,0) * -1);
-  margin-right: calc(var(--collection-product-padding,0) * -1);
-  padding-top: 4px;
-  padding-bottom: 6px;
-  padding-left: var(--padding-x);
-  padding-right: var(--padding-x);
   height: 100%;
-  grid-area: info;
+  width: 100%;
+  background-color: black;
 }
 
 #imagen-carta {
-  width: 100%;
   height: 100%;
-  object-fit: cover;
+  width: 100%;
+  background-color: black;
 }
 
 #formato {
   font-size:0.9rem;
+  color: white;
 }
 
 #art-titulo {
-  font-size: var(--collection-product-title-fSize, 1rem);
-  color: var(--collection-product-title-color);
-  font-weight: var(--font-light);
   margin: 0;
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: var(--collection-product-title-lines);
-  -webkit-box-orient: vertical;
-  height: calc(var(--collection-product-title-lines)*1.2rem );
+  text-wrap: wrap;
+  width: 200px;
+  color: white;
 }
 
 #precio {
   font-size: 1.2rem;
   text-align: left;
-  align-self:auto;
   text-wrap: wrap;
   display: flex;
   vertical-align: bottom;
+  color: white;
+}
+
+#col-prod {
+  display: flex;
+  width: 100%;
+}
+
+#fila {
+  flex-wrap: nowrap;
+  height: 100%;
 }
