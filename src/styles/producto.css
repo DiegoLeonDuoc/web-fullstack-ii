@@ -1,76 +1,126 @@
-.product-page {
-    padding-top: 24px;
-    padding-bottom: 40px;
+/* -------------------------------------------------
+   Container & grid
+   ------------------------------------------------- */
+.container.product-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
 }
 
-.product-gallery img#main-image {
-    width: 100%;
-    max-height: 520px;
-    object-fit: cover;
-    background: #111;
+/* Flex helpers – applied directly to the elements that need them */
+.product-page .price-rating,
+.product-page .rating,
+.product-page .purchase-controls,
+.product-page .review-header {
+  display: flex;
+  align-items: center;
 }
 
-.thumbs .thumb {
-    width: 72px;
-    height: 72px;
-    object-fit: cover;
-    cursor: pointer;
+/* Space between items – use margin on the child elements */
+.product-page .price-rating > div,
+.product-page .rating > div,
+.product-page .purchase-controls > * {
+  margin-right: 1rem;               /* 1 rem ≈ 16 px */
 }
 
-.product-title {
-    margin-top: 0;
-    font-size: 1.6rem;
+/* Remove the extra margin on the last child */
+.product-page .price-rating > div:last-child,
+.product-page .rating > div:last-child,
+.product-page .purchase-controls > *:last-child {
+  margin-right: 0;
 }
 
-.price-value {
-    font-size: 1.5rem;
-    color: #fff;
-    background: linear-gradient(90deg,#ff6b6b,#ffca3a);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    font-weight: 700;
+/* -------------------------------------------------
+   Columns – we keep the same visual layout but
+   without Bootstrap’s col‑* class names.
+   ------------------------------------------------- */
+.product-page .gallery-column {
+  flex: 0 0 41.666667%;   /* 5/12 */
+  max-width: 41.666667%;
+  padding: 0.75rem;
+}
+.product-page .info-column {
+  flex: 0 0 58.333333%;   /* 7/12 */
+  max-width: 58.333333%;
+  padding: 0.75rem;
 }
 
-.price-label {
-    color: #bbb;
-    margin-right: 6px;
+/* Stack columns on small screens */
+@media (max-width: 767.98px) {
+  .product-page .gallery-column,
+  .product-page .info-column {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
 }
 
-.rating .fa {
-    color: #ffcc00;
-    margin-right: 3px;
+/* -------------------------------------------------
+   Card‑like containers
+   ------------------------------------------------- */
+.product-page .card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: .25rem;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
 
-.product-desc {
-    color: #ddd;
+/* -------------------------------------------------
+   Images
+   ------------------------------------------------- */
+.product-page img.img-fluid {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
-.purchase-controls .qty-input {
-    background: #0b0b0b;
-    color: #fff;
-    border: 1px solid #333;
+/* -------------------------------------------------
+   Text helpers
+   ------------------------------------------------- */
+.product-page .text-muted { color: #6c757d; }
+.product-page .text-warning { color: #ffc107; }
+.product-page .small { font-size: .85rem; }
+
+/* -------------------------------------------------
+   Buttons
+   ------------------------------------------------- */
+.product-page button {
+  cursor: pointer;
+  border: none;
+  padding: .5rem 1rem;
+  border-radius: .25rem;
+  font-size: 1rem;
+}
+.product-page .btn-primary {
+  background: #0d6efd;
+  color: #fff;
+}
+.product-page .btn-outline-light {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+}
+.product-page button i { margin-right: .3rem; }
+
+/* -------------------------------------------------
+   Quantity input
+   ------------------------------------------------- */
+.product-page input.qty-input {
+  width: 90px;
+  padding: .375rem .75rem;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
 }
 
-.product-meta div {
-    margin-top: 6px;
+/* -------------------------------------------------
+   Review card
+   ------------------------------------------------- */
+.product-page .review {
+  border: 1px solid #e0e0e0;
+  border-radius: .25rem;
+  padding: 1rem;
+  margin-bottom: .5rem;
 }
-
-.reviews-section h3 {
-    margin-top: 20px;
-}
-
-.review .stars .fa {
-    color: #f1c40f;
-}
-
-.card {
-    background: rgba(255,255,255,0.03);
-}
-
-/* Responsive tweaks */
-@media (max-width: 800px) {
-    .product-gallery img#main-image {
-        max-height: 360px;
-    }
+.product-page .review-header {
+  justify-content: space-between;
 }

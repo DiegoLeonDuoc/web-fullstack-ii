@@ -6,18 +6,18 @@ import Home from './pages/Home';
 import Producto from './pages/Producto';
 
 function App() {
-    return (
-        <div>
-            <Header/>
-            <main>
-                <Routes>
-                    <Route path="/" element={<Home/>} />
-                    <Route path="/producto/:id" element={<Producto/>} />
-                </Routes>
-            </main>
-            <Footer/>
-        </div>
-    );
+  return (
+    <div>
+      <Header/>
+      <main>
+        <Routes>
+          <Route path="/" element={<Home/>} />
+          <Route path="/producto/:id" element={<Producto/>} />
+        </Routes>
+      </main>
+      <Footer/>
+    </div>
+  );
 }
 
 export default App;
