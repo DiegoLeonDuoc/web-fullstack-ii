@@ -1,10 +1,9 @@
 // FilaDeProductos.js
 import { Row, Col } from 'react-bootstrap';
 import TarjetaProducto from './TarjetaProducto';
-import '../styles/FilaDeProductos.css';
+import '../styles/filaproductos.css';
 
 const FilaDeProductos = ({ productos }) => {
-  //console.log(productos);
   return (
     <div className="fila-productos">
       <Row id="fila">

@@ -1,0 +1,16 @@
+.fila-productos {
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: thin; 
+  padding: 0.5rem;
+}
+
+#col-prod {
+  display: flex;
+  width: 100%;
+}
+
+#fila {
+  flex-wrap: nowrap;
+  height: 100%;
+}

@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom';
-import '../styles/FilaDeProductos.css';
+import '../styles/tarjetaproducto.css';
+
 
 const TarjetaProducto = ({producto}) => {
-  console.log(producto); // Check the entire object
-console.log(producto.titulo); 
   
   const linkProducto = function(producto) {
     return (
@@ -11,17 +10,15 @@ console.log(producto.titulo);
     )
   }
 
-
-
   return (
     <div className="card">
       <Link to={linkProducto(producto)}>
-        <img className='imagen-carta' src={producto.img} alt={producto.alt} />
+        <img id='imagen-carta' src={producto.img} alt={producto.alt} />
       </Link>
       <div className="card-body">
-        <small className="formato">{producto.formato}</small>
-        <small className="art-titulo">{producto.artista} - {producto.titulo}</small>
-        <small className="precio">{'$ ' + producto.precio}</small>
+        <small id="formato">{producto.formato}</small>
+        <small id="art-titulo">{producto.artista} - {producto.titulo}</small>
+        <small id="precio">{'$ ' + producto.precio}</small>
       </div>
     </div>
   );

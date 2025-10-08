@@ -1,30 +1,34 @@
-@import url("../styles/styles.css");
-
-body {
-    background: #000000fd;
-    color: #fff;
+/* Container spacing (replaces my-5) */
+.registro-container {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
 }
 
-.site-header {
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+/* Column width (replaces col-sm-12, col-md-8, col-lg-6) */
+.registro-col {
+  max-width: 100%;
 }
 
-.card {
-    background: rgba(255,255,255,0.03);
+/* Card background – dark theme */
+.registro-card {
+  background-color: #343a40;
 }
 
-.form-control {
-    background: rgba(255,255,255,0.02);
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.08);
+/* Ensure the link stays light on dark background */
+.text-light {
+  color: #f8f9fa !important;
 }
 
-.form-control::placeholder {
-    color: rgba(255,255,255,0.5);
-}
-.btn-primary {
-    background: #094b57;
-    border: none;
+.card-title {
+  text-align: center;
+  padding-bottom: 0.8rem;
 }
 
-a:hover { color: #ffffff; }
+.formulario-registro {
+  justify-content: center;
+}
+
+.cuenta-registrada {
+  text-align: center;
+  margin-top: 1rem;
+}

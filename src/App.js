@@ -7,6 +7,7 @@ import Producto from './pages/Producto';
 import Mision from './pages/Mision';
 import Vision from './pages/Vision';
 import Contacto from './pages/Contacto';
+import Registro from './pages/Registro';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/mision" element={<Mision/>} />
           <Route path="/vision" element={<Vision/>} />
           <Route path="/contacto" element={<Contacto/>} />
+          <Route path="/registro" element={<Registro/>} />
         </Routes>
       </main>
       <Footer/>

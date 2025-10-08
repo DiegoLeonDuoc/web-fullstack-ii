@@ -1,0 +1,16 @@
+.campo {
+  color: white !important;
+  background-color: black !important; 
+}
+
+.campo::placeholder {
+color:white !important;
+}
+
+.is-valid {
+  border-color: #28a745 !important;
+}
+
+.is-invalid {
+  border-color: #dc3545 !important;
+}
