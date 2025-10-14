@@ -10,6 +10,7 @@ import {
   isValidPassword,
   isValidAge,
 } from "../utils/Validaciones";
+import Storage from '../utils/Storage'
 
 function FormularioRegistro() {
   const navigate = useNavigate();
@@ -71,20 +72,47 @@ function FormularioRegistro() {
 
   const isFormValid = valid.rut && valid.age && valid.email && valid.password;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
 
     // If the form is somehow submitted while invalid, focus first error
-    if (!isFormValid) {
-      const firstInvalidKey = Object.keys(valid).find((k) => !valid[k]);
-      const el = document.getElementById(firstInvalidKey);
-      if (el) el.focus();
-      return;
-    }
+  //   if (!isFormValid) {
+  //     const firstInvalidKey = Object.keys(valid).find((k) => !valid[k]);
+  //     const el = document.getElementById(firstInvalidKey);
+  //     if (el) el.focus();
+  //     return;
+  //   }
 
-    console.log("Submitting:", formData);
-    navigate("/login");
-  };
+  //   console.log("Submitting:", formData);
+  //   navigate("/login");
+  // };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!isFormValid) {
+    const firstInvalidKey = Object.keys(valid).find((k) => !valid[k]);
+    const el = document.getElementById(firstInvalidKey);
+    if (el) el.focus();
+    return;
+  }
+
+  try {
+    // Guardar usuario en localStorage
+    const result = Storage.saveUser(formData);
+    
+    if (result.success) {
+      console.log("Usuario registrado exitosamente:", result.user);
+      navigate("/login");
+    } else {
+      // Mostrar error al usuario
+      alert(result.error);
+      console.error("Error en registro:", result.error);
+    }
+  } catch (error) {
+    console.error("Error al registrar usuario:", error);
+    alert("Error al registrar usuario. Intente nuevamente.");
+  }
+};
 
   return (
     <Form id="registerForm" noValidate onSubmit={handleSubmit}>

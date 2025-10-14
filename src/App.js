@@ -8,6 +8,7 @@ import Mision from './pages/Mision';
 import Vision from './pages/Vision';
 import Contacto from './pages/Contacto';
 import Registro from './pages/Registro';
+import Login from './pages/Login';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/vision" element={<Vision/>} />
           <Route path="/contacto" element={<Contacto/>} />
           <Route path="/registro" element={<Registro/>} />
+          <Route path="/login" element={<Login/>} />
         </Routes>
       </main>
       <Footer/>

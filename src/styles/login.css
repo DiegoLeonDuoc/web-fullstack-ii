@@ -3,27 +3,42 @@ body {
     color: #fff;
 }
 
-.site-header {
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+.card-body .card-title {
+    color: white;
 }
 
-.card {
-    background: rgba(255,255,255,0.03);
+.form-group .form-control {
+    background-color: black;
 }
 
-.form-control {
-    background: rgba(255,255,255,0.02);
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.08);
+.form-group .form-control::placeholder {
+    color: white;
 }
 
-.form-control::placeholder {
-    color: rgba(255,255,255,0.5);
+.form-group {
+    padding-bottom: 1rem;
 }
 
-.btn-primary {
-    background: #094b57;
-    border: none;
+.login-page .btn-primary {
+  background-color: #094b57;
+  border: none;
+}
+
+.login-page .btn-primary:hover,
+.login-page .btn-primary:focus,
+.login-page .btn-primary:active {
+  background-color: #063840 !important;
+  border: none;
+  box-shadow: none;
+}
+
+.label-input {
+    padding-bottom: 0.5rem;
+    color: white;
+}
+
+.text-center {
+    color:white
 }
 
 a:hover { color: #ffffff; }
