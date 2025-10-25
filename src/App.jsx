@@ -9,6 +9,7 @@ import Vision from './pages/Vision';
 import Contacto from './pages/Contacto';
 import Registro from './pages/Registro';
 import Login from './pages/Login';
+import Catalogo from './pages/Catalogo';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <main>
         <Routes>
           <Route path="/" element={<Home/>} />
+          <Route path="/catalogo" element={<Catalogo/>} />
           <Route path="/producto/:id" element={<Producto/>} />
           <Route path="/mision" element={<Mision/>} />
           <Route path="/vision" element={<Vision/>} />

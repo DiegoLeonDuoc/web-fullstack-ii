@@ -1,33 +1,28 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Image,
-  Button,
-  Form,
-} from "react-bootstrap";
+import { Container, Row, Col, Card, Image, Button, Form } from "react-bootstrap";
 
-import dataProducto from "../data/DataProducto";   // ← now an array
+import productos from "../data/Productos";
 import dataReviews from "../data/DataReviews";
 import estrellas from "../components/Estrellas";
 import "../styles/producto.css";
 
 export default function ProductPage() {
-  const { id } = useParams();                     
-  const [product, setProduct] = useState(null);   
+  const { id } = useParams();
+  const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-    const found = dataProducto.find((p) => p.id === id);
-    console.log(found);
+    const found = productos.find((p) => p.id === id);
     setProduct(found || null);
     setReviews(dataReviews.filter((r) => r.productNom === id));
   }, [id]);
 
-  if (!product) return <div>Loading…</div>;
+  if (!product) return <div>Cargando...</div>;
+
+  const year = Number.isFinite(product.anio)
+    ? product.anio
+    : (Object.values(product).find((v) => typeof v === 'string' && /^\d{4}$/.test(v)) || '');
 
   return (
     <Container className="container product-page">
@@ -39,7 +34,7 @@ export default function ProductPage() {
         </Col>
 
         <Col className="info-column">
-          <div className="product‑info">
+          <div className="product-info">
             <h2 className="product-title">{product.titulo}</h2>
 
             <div className="price-rating">
@@ -63,13 +58,7 @@ export default function ProductPage() {
 
             <Form className="purchase-controls">
               <Form.Label htmlFor="qty">Cantidad</Form.Label>
-              <Form.Control
-                id="qty"
-                type="number"
-                min={1}
-                defaultValue={1}
-                className="qty-input"
-              />
+              <Form.Control id="qty" type="number" min={1} defaultValue={1} className="qty-input" />
               <Button className="btn-primary">
                 <i className="fa fa-shopping-cart" /> Agregar al carrito
               </Button>
@@ -85,7 +74,7 @@ export default function ProductPage() {
                 <strong>Artista:</strong> {product.artista}
               </div>
               <div>
-                <strong>Lanzamiento:</strong> {product.año}
+                <strong>Lanzamiento:</strong> {year}
               </div>
               <div>
                 <strong>Etiqueta:</strong> {product.etiqueta}
@@ -120,3 +109,4 @@ export default function ProductPage() {
     </Container>
   );
 }
+

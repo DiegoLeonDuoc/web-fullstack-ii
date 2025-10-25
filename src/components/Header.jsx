@@ -1,11 +1,12 @@
 // Header.js
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Auth } from '../utils/Auth';
 
 function Header() {
   const navigate = useNavigate();
   const { isLoggedIn, currentUser, logout } = Auth();
+  const [showMenu, setShowMenu] = useState(false);
 
   // Escuchar cambios de autenticación
   useEffect(() => {
@@ -26,6 +27,11 @@ function Header() {
     navigate('/');
   };
 
+  const goCategoria = (formato) => {
+    setShowMenu(false);
+    navigate(`/catalogo?formato=${encodeURIComponent(formato)}`);
+  }
+
   const getInitials = (firstName, lastName) => {
     return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
   };
@@ -39,6 +45,7 @@ function Header() {
         <nav aria-label="Main navigation">
           <ul>
             <li><Link to="/">Inicio</Link></li>
+            <li><Link to="/catalogo">Catálogo</Link></li>
             <li><Link to="/mision">Misión</Link></li>
             <li><Link to="/vision">Visión</Link></li>
             <li><Link to="/contacto">Contacto</Link></li>
@@ -48,6 +55,22 @@ function Header() {
       </div>
 
       <div className="header-right">
+        <div className="me-3" style={{ position: 'relative' }}>
+          <button
+            type="button"
+            aria-label="Abrir menú"
+            className="btn btn-outline-light"
+            onClick={() => setShowMenu((s) => !s)}
+          >
+            <span className="fa fa-bars" />
+          </button>
+          {showMenu && (
+            <div className="dropdown-menu show" style={{ display: 'block', position: 'absolute' }}>
+              <button className="dropdown-item" onClick={() => goCategoria('CD')}>CD</button>
+              <button className="dropdown-item" onClick={() => goCategoria('Vinilo')}>Vinilo</button>
+            </div>
+          )}
+        </div>
         <div className="search-bar" role="search">
           <input type="text" placeholder="Buscar producto..." aria-label="Buscar producto" />
           <button type="button">Buscar</button>
