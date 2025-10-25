@@ -15,7 +15,8 @@ describe('Utils/Filters', () => {
 
   it('filtra por rango de precio', () => {
     const out = filterProducts(mock, { minPrecio: 10000, maxPrecio: 15000 });
-    expect(out.map(p => p.id)).toEqual(['p1', 'p2']);
+    // $18.990 queda fuera del rango [10.000, 15.000]; solo entra $12.000
+    expect(out.map(p => p.id)).toEqual(['p2']);
   });
 
   it('filtra por formato contiene', () => {
@@ -38,4 +39,3 @@ describe('Utils/Filters', () => {
     expect(out.map(p => p.id)).toEqual(['p1']);
   });
 });
-

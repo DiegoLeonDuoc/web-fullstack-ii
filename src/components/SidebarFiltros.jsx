@@ -18,11 +18,20 @@ export default function SidebarFiltros({ productos = [], initial = {}, onChange 
     ...normalizeInitial(initial),
   });
 
+  // Notificar cambios de criterios (no dependemos de la identidad de onChange)
   useEffect(() => {
-    if (onChange) {
+    if (typeof onChange === 'function') {
       onChange(toFilterCriteria(criteria));
     }
-  }, [criteria, onChange]);
+  }, [criteria]);
+
+  // Si cambian presets iniciales (por querystring), sincroniza el estado local una vez
+  useEffect(() => {
+    if (initial && Object.keys(initial).length > 0) {
+      setCriteria((prev) => ({ ...prev, ...normalizeInitial(initial) }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initial]);
 
   const opciones = useMemo(() => buildOptions(productos), [productos]);
 
@@ -178,4 +187,3 @@ export function toFilterCriteria(ui) {
   if (ui.minRating !== '') crit.minRating = Number(ui.minRating);
   return crit;
 }
-
