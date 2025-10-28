@@ -5,6 +5,10 @@ import '../styles/tarjetaproducto.css';
 const TarjetaProducto = ({producto}) => {
   
   const linkProducto = function(producto) {
+    // Si existe un id, usar para URL estable; si no, generar slug previo
+    if (producto && producto.id) {
+      return `/producto/${producto.id}`
+    }
     return (
       '/producto/'+(producto.titulo.toLowerCase()+' '+producto.formato.toLowerCase()).replace(/\s+/g, '-')
     )
