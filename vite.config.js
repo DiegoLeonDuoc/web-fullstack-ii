@@ -7,7 +7,7 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true, // Para usar describe/it/expect sin importar
     setupFiles: './src/setupTests.js', // Opcional
-    include: ['src/tests/**/*.{js,jsx,ts,tsx}'], // only this folder
+    include: ['src/tests/**/*.test.{js,jsx,ts,tsx}'], // only this folder
     exclude: ['src/App.test.*'] // optional: explicitly ignore default CRA test
   }
 })
