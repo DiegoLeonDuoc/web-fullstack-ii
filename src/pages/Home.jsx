@@ -3,6 +3,10 @@ import React from 'react';
 import FilaDeProductos from '../components/FilaDeProductos';
 import DataFilas from '../data/DataFilas';
 
+/**
+ * Página de inicio con productos recomendados.
+ * @returns {JSX.Element}
+ */
 function Home() {
   return (
     <div>

@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Form, Button, Card } from 'react-bootstrap';
 
+/**
+ * Formulario para crear/editar productos del catálogo.
+ * @param {Object} props
+ * @param {(product: Object) => void} props.onSubmit - Callback al enviar el formulario.
+ * @param {Object} [props.selectedProduct] - Producto seleccionado para edición.
+ * @param {() => void} [props.onCancel] - Callback al cancelar edición.
+ * @returns {JSX.Element}
+ */
 export default function ProductForm({ onSubmit, selectedProduct, onCancel }) {
   const [formData, setFormData] = useState({
     titulo: '',

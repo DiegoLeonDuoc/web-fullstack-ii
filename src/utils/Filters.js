@@ -1,6 +1,11 @@
 // Utilidades de filtrado para productos
 
 // Convierte precios como "$18.990" o "12.990" a número 18990/12990
+/**
+ * Convierte un precio con formato de string a número entero de pesos.
+ * @param {string|number|null|undefined} precio - Precio a convertir (puede incluir símbolos y puntos).
+ * @returns {number} Valor numérico del precio, o NaN si no es posible convertir.
+ */
 export function parsePrecio(precio) {
   if (precio == null) return NaN;
   const onlyDigits = String(precio).replace(/[^0-9]/g, '');
@@ -16,6 +21,19 @@ export function parsePrecio(precio) {
 //   etiqueta?: string[] | string,
 //   minRating?: number
 // }
+/**
+ * Filtra una lista de productos según criterios opcionales.
+ * @param {Array<Object>} productos - Lista de productos a filtrar.
+ * @param {Object} [criteria] - Criterios de filtrado.
+ * @param {number} [criteria.minPrecio]
+ * @param {number} [criteria.maxPrecio]
+ * @param {string|string[]} [criteria.formato]
+ * @param {string|string[]} [criteria.artista]
+ * @param {number|number[]} [criteria.anio] - Año o rango [min, max].
+ * @param {string|string[]} [criteria.etiqueta]
+ * @param {number} [criteria.minRating]
+ * @returns {Array<Object>} Productos que cumplen los criterios.
+ */
 export function filterProducts(productos, criteria = {}) {
   if (!Array.isArray(productos)) return [];
 
@@ -81,6 +99,11 @@ export function filterProducts(productos, criteria = {}) {
   });
 }
 
+/**
+ * Normaliza un valor a arreglo.
+ * @param {any} val - Valor a normalizar.
+ * @returns {any[]} Arreglo (vacío si null/undefined).
+ */
 function normalizeToArray(val) {
   if (val == null) return [];
   return Array.isArray(val) ? val : [val];

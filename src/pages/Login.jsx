@@ -6,6 +6,10 @@ import { isValidEmail } from '../utils/Validaciones';
 import Storage from '../utils/UserStorage';
 import '../styles/login.css'
 
+/**
+ * Página de inicio de sesión con validaciones básicas.
+ * @returns {JSX.Element}
+ */
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
@@ -17,6 +21,7 @@ const Login = () => {
   const { login } = Auth();
   const navigate = useNavigate();
 
+  // Maneja cambios campo a campo y limpia el error específico al escribir
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -32,6 +37,7 @@ const Login = () => {
     }
   };
 
+  // Validación mínima en cliente antes de intentar autenticarse
   const validateForm = () => {
     const newErrors = {};
     
@@ -49,6 +55,7 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Envío del formulario: valida, llama a verifyCredentials (que hashea internamente)
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -59,8 +66,8 @@ const Login = () => {
     setIsSubmitting(true);
     
     try {
-      // Use Storage directly for authentication
-      const result = Storage.verifyCredentials(formData.email, formData.password);
+      // Use Storage directly for authentication (async, hashing inside)
+      const result = await Storage.verifyCredentials(formData.email, formData.password);
       
       if (result.success) {
         login(result.user);

@@ -1,6 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+/**
+ * Pie de página del sitio con enlaces y formulario de contacto simple.
+ * @returns {JSX.Element}
+ */
 function Footer() {
   return (
     <footer className="footer-custom">

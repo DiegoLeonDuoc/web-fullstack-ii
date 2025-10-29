@@ -4,6 +4,10 @@ import { Link } from "react-router-dom";
 import FormularioRegistro from "../components/FormularioRegistro";
 import "../styles/registro.css";
 
+/**
+ * Página de registro de usuarios.
+ * @returns {JSX.Element}
+ */
 export default function Registro() {
   return (
     <Container className="registro-container">

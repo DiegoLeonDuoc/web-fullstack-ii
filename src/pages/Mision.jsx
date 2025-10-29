@@ -1,5 +1,9 @@
 import React from 'react';
 import '../styles/mision.css'
+/**
+ * Página estática: Misión de la empresa.
+ * @returns {JSX.Element}
+ */
 function Mision() {
     return (
         <section class="mision-container" aria-labelledby="mision-title">

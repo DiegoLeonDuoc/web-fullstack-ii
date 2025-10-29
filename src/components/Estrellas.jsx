@@ -1,3 +1,8 @@
+/**
+ * Renderiza íconos de estrellas (llenas/medias/vacías) según un valor 0-5.
+ * @param {number} value - Valor del rating (admite medios puntos).
+ * @returns {JSX.Element}
+ */
 const estrellas = (value) => {
     const full = Math.floor(value);
     const half = value % 1 >= 0.5;

@@ -1,5 +1,13 @@
 import { Table, Button, Image } from 'react-bootstrap';
 
+/**
+ * Tabla de productos con acciones de edición/eliminación.
+ * @param {Object} props
+ * @param {Array<Object>} props.products - Lista de productos.
+ * @param {(product: Object) => void} props.onEdit - Callback para editar un producto.
+ * @param {(id: string) => void} props.onDelete - Callback para eliminar un producto.
+ * @returns {JSX.Element}
+ */
 export default function ProductTable({ products, onEdit, onDelete }) {
   if (!products.length)
     return <p className="text-center text-muted mt-3">No hay productos registrados.</p>;

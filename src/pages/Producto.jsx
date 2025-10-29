@@ -7,6 +7,10 @@ import dataReviews from "../data/DataReviews";
 import estrellas from "../components/Estrellas";
 import "../styles/producto.css";
 
+/**
+ * Página de detalle de producto (por id en URL).
+ * @returns {JSX.Element}
+ */
 export default function ProductPage() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);

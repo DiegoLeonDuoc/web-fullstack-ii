@@ -1,5 +1,11 @@
 import React from "react";
 
+/**
+ * Muestra un mensaje de advertencia debajo de un campo si existe.
+ * @param {Object} props
+ * @param {string} [props.message] - Mensaje a mostrar. Si está vacío, no renderiza nada.
+ * @returns {JSX.Element|null}
+ */
 function AdvertenciaCampo({ message }) {
   if (!message) return null;
   return (

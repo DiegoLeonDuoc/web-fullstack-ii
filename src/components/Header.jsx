@@ -2,11 +2,19 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Auth } from '../utils/Auth';
+import ShoppingCartIcon from './ShoppingCartIcon';
+// import Storage removed: no longer showing password hash
 
+/**
+ * Encabezado principal con navegación, búsqueda y usuario/sesión.
+ * @returns {JSX.Element}
+ */
 function Header() {
   const navigate = useNavigate();
   const { isLoggedIn, currentUser, logout } = Auth();
   const [showMenu, setShowMenu] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  // Removed password hash visualization for cleaner UI
 
   // Escuchar cambios de autenticación
   useEffect(() => {
@@ -21,6 +29,8 @@ function Header() {
       window.removeEventListener('authStateChanged', handleAuthChange);
     };
   }, []);
+
+  // Hash visualization removed
 
   const handleLogout = () => {
     logout();
@@ -75,13 +85,16 @@ function Header() {
           <input type="text" placeholder="Buscar producto..." aria-label="Buscar producto" />
           <button type="button">Buscar</button>
         </div>
-        <div className="cart">
-          <Link to="/carrito"><i className="fa fa-shopping-cart"></i></Link>
-        </div>
+        <ShoppingCartIcon />
         <div className="user-account">
           {isLoggedIn ? (
-            <div className="user-menu">
-              <div className="user-avatar" title={`${currentUser?.firstName} ${currentUser?.lastName}`}>
+            <div className="user-menu" style={{ position: 'relative' }}>
+              <button
+                type="button"
+                className="user-avatar btn btn-outline-light"
+                title={`${currentUser?.firstName} ${currentUser?.lastName}`}
+                onClick={() => setShowUserMenu((s) => !s)}
+              >
                 {currentUser ? (
                   <span className="avatar-initials">
                     {getInitials(currentUser.firstName, currentUser.lastName)}
@@ -89,25 +102,31 @@ function Header() {
                 ) : (
                   <i className="fa fa-user"></i>
                 )}
-              </div>
-              <div className="user-dropdown">
-                <div className="user-info">
-                  <strong>{currentUser?.firstName} {currentUser?.lastName}</strong>
-                  <span>{currentUser?.email}</span>
-                </div>
-                <Link to="/perfil" className="dropdown-item">
-                  <i className="fa fa-user"></i> Mi Perfil
-                </Link>
-                <Link to="/pedidos" className="dropdown-item">
-                  <i className="fa fa-shopping-bag"></i> Mis Pedidos
-                </Link>
-                <button 
-                  onClick={handleLogout} 
-                  className="dropdown-item logout-btn"
+              </button>
+              {showUserMenu && (
+                <div
+                  className="dropdown-menu show"
+                  style={{ display: 'block', right: 0, left: 'auto', position: 'absolute', minWidth: '220px' }}
                 >
-                  <i className="fa fa-sign-out"></i> Cerrar Sesión
-                </button>
-              </div>
+                  <div className="px-3 py-2 border-bottom">
+                    <div className="small text-muted">Bienvenido</div>
+                    <strong>{currentUser?.firstName} {currentUser?.lastName}</strong>
+                  </div>
+                  <button type="button" className="dropdown-item" onClick={() => { /* visual only */ }}>
+                    <i className="fa fa-user"></i> Perfil
+                  </button>
+                  <button type="button" className="dropdown-item" onClick={() => { /* visual only */ }}>
+                    <i className="fa fa-shopping-bag"></i> Mis compras
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={handleLogout}
+                    className="dropdown-item logout-btn"
+                  >
+                    <i className="fa fa-sign-out"></i> Cerrar sesión
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <>

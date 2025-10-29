@@ -1,6 +1,10 @@
 import React from 'react';
 import '../styles/vision.css'
 
+/**
+ * Página estática: Visión de la empresa.
+ * @returns {JSX.Element}
+ */
 function Vision() {
     return (
         <section class="vision-container" aria-labelledby="vision-title">

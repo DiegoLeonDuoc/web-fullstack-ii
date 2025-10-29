@@ -5,6 +5,10 @@ import TarjetaProducto from '../components/TarjetaProducto';
 import dataProducto from '../data/Productos';
 import { filterProducts } from '../utils/Filters';
 
+/**
+ * Página de catálogo con filtros y listado de productos.
+ * @returns {JSX.Element}
+ */
 export default function Catalogo() {
   const [criteria, setCriteria] = useState({});
   const [preset, setPreset] = useState({});

@@ -12,6 +12,10 @@ import {
 } from "../utils/Validaciones";
 import Storage from '../utils/UserStorage'
 
+/**
+ * Formulario de registro de usuario con validaciones en vivo.
+ * @returns {JSX.Element}
+ */
 function FormularioRegistro() {
   const navigate = useNavigate();
 
@@ -42,12 +46,14 @@ function FormularioRegistro() {
   });
 
   // ----------------------------------------------------------------------
+  // Maneja cambios actualizando el estado del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   // recompute validity on every relevant change
+  // Recalcula banderas de validez cada vez que cambien estos campos
   useEffect(() => {
     setValid({
       rut: formData.rut ? isRutFormat(formData.rut) && isValidRut(formData.rut) : null,
@@ -58,6 +64,7 @@ function FormularioRegistro() {
   }, [formData.rut, formData.age, formData.email, formData.password]);
 
   // keep warning texts in sync with the validity flags
+  // Mantiene sincronizados los mensajes de advertencia con las banderas de validez
   useEffect(() => {
     setWarnings({
       rut: valid.rut === false ? "RUT inválido o con formato incorrecto." : "",
@@ -86,6 +93,7 @@ function FormularioRegistro() {
   //   console.log("Submitting:", formData);
   //   navigate("/login");
   // };
+  // Envío: si es válido, delega a Storage.saveUser que hashea la contraseña
   const handleSubmit = async (e) => {
   e.preventDefault();
 
@@ -97,8 +105,8 @@ function FormularioRegistro() {
   }
 
   try {
-    // Guardar usuario en localStorage
-    const result = Storage.saveUser(formData);
+    // Guardar usuario en localStorage (hash de contraseña dentro)
+    const result = await Storage.saveUser(formData);
     
     if (result.success) {
       console.log("Usuario registrado exitosamente:", result.user);

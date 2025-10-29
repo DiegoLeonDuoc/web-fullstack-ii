@@ -1,17 +1,37 @@
+/**
+ * Valida si un string tiene un formato de email válido.
+ * @param {string} email - Email a validar.
+ * @returns {boolean} True si el email tiene formato válido, de lo contrario false.
+ */
 export function isValidEmail(email) {
   return /^((?:[A-Za-z0-9!#$%&'*+\-/=?^_`{|}~]|(?<=^|\.)"|"(?=$|\.|@)|(?<=".*)[ .](?=.*")|(?<!\.)\.){1,64})(@)((?:[A-Za-z0-9.-])*(?:[A-Za-z0-9])\.(?:[A-Za-z0-9]){2,})$/gm
     .test(String(email).trim());
 }
 
 // funciones rut
+/**
+ * Normaliza un RUT removiendo puntos y espacios y transformando a minúsculas.
+ * @param {string} rut - RUT a normalizar.
+ * @returns {string} RUT normalizado.
+ */
 export function normalizeRut(rut) {
   return String(rut).replace(/\./g, '').replace(/\s+/g, '').toLowerCase();
 }
 
+/**
+ * Verifica si el RUT normalizado cumple el formato NNNNNNNN-DV.
+ * @param {string} rut - RUT a evaluar (se normaliza internamente).
+ * @returns {boolean} True si el formato es válido.
+ */
 export function isRutFormat(rut) {
   return /^[0-9]+-[0-9k]{1}$/.test(normalizeRut(rut));
 }
 
+/**
+ * Calcula el dígito verificador (DV) de un RUT dado su parte numérica.
+ * @param {string} numPart - Parte numérica del RUT (solo dígitos).
+ * @returns {"0"|"k"|string} Dígito verificador calculado.
+ */
 export function computeRutDV(numPart) {
   let sum = 0;
   let factor = 2;
@@ -25,6 +45,11 @@ export function computeRutDV(numPart) {
   return String(remainder);
 }
 
+/**
+ * Valida completamente un RUT chileno (formato y DV).
+ * @param {string} rut - RUT a validar.
+ * @returns {boolean} True si el RUT es válido.
+ */
 export function isValidRut(rut) {
   const norm = normalizeRut(rut);
   if (!isRutFormat(norm)) return false;
@@ -34,6 +59,12 @@ export function isValidRut(rut) {
 }
 
 // funciones contraseña y edad
+/**
+ * Verifica si una contraseña cumple con los requisitos mínimos.
+ * Requisitos: 8-30 caracteres, minúscula, mayúscula, dígito y símbolo.
+ * @param {string} pw - Contraseña a validar.
+ * @returns {boolean} True si la contraseña es válida.
+ */
 export function isValidPassword(pw) {
   if (typeof pw !== 'string') return false;
   if (pw.length < 8 || pw.length > 30) return false;
@@ -44,6 +75,11 @@ export function isValidPassword(pw) {
   return hasLower && hasUpper && hasDigit && hasSymbol;
 }
 
+/**
+ * Valida si la edad está en el rango permitido.
+ * @param {string|number} age - Edad a validar.
+ * @returns {boolean} True si 18 <= edad <= 120.
+ */
 export function isValidAge(age) {
   const n = parseInt(age, 10);
   return n >= 18 && n <= 120;

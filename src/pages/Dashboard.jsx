@@ -4,6 +4,10 @@ import ProductForm from '../components/ProductForm';
 import ProductTable from '../components/ProductTable';
 import { initStorage, getProducts, addProduct, updateProduct, deleteProduct } from '../utils/MusicStorage';
 
+/**
+ * Panel de administración para gestionar productos.
+ * @returns {JSX.Element}
+ */
 export default function Dashboard() {
   const [products, setProducts] = useState([]);
   const [selected, setSelected] = useState(null);

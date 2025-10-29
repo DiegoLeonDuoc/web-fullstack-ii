@@ -1,5 +1,9 @@
 import React from 'react';
 import '../styles/contacto.css';
+/**
+ * Página de contacto con formulario accesible.
+ * @returns {JSX.Element}
+ */
 function Contacto() {
     return(
         <section class="contact-container">

@@ -2,6 +2,12 @@ import { Link } from 'react-router-dom';
 import '../styles/tarjetaproducto.css';
 
 
+/**
+ * Tarjeta visual de un producto del catálogo.
+ * @param {Object} props
+ * @param {Object} props.producto - Producto a mostrar.
+ * @returns {JSX.Element}
+ */
 const TarjetaProducto = ({producto}) => {
   
   const linkProducto = function(producto) {

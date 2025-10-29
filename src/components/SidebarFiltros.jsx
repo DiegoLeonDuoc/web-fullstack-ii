@@ -5,6 +5,15 @@ import { Form, Button } from 'react-bootstrap';
 // - productos: array para derivar opciones (artistas, etiquetas, años)
 // - initial: criterios iniciales
 // - onChange: (criteria) => void
+/**
+ * Barra lateral de filtros para el catálogo de productos.
+ * Notifica cambios vía onChange con criterios listos para filtrar.
+ * @param {Object} props
+ * @param {Array<Object>} [props.productos=[]] - Productos base para opciones.
+ * @param {Object} [props.initial={}] - Criterios iniciales (desde URL u otros).
+ * @param {(criteria: Object) => void} props.onChange - Callback con criterios para filtrar.
+ * @returns {JSX.Element}
+ */
 export default function SidebarFiltros({ productos = [], initial = {}, onChange }) {
   const [criteria, setCriteria] = useState({
     minPrecio: '',
@@ -160,12 +169,22 @@ export default function SidebarFiltros({ productos = [], initial = {}, onChange 
   );
 }
 
+/**
+ * Deriva opciones únicas de artistas y etiquetas.
+ * @param {Array<Object>} productos
+ * @returns {{artistas: string[], etiquetas: string[]}}
+ */
 function buildOptions(productos) {
   const artistas = Array.from(new Set(productos.map((p) => p.artista).filter(Boolean))).sort();
   const etiquetas = Array.from(new Set(productos.map((p) => p.etiqueta).filter(Boolean))).sort();
   return { artistas, etiquetas };
 }
 
+/**
+ * Normaliza criterios iniciales para el estado del UI.
+ * @param {Object} initial
+ * @returns {Object}
+ */
 function normalizeInitial(initial) {
   const c = { ...initial };
   if (Array.isArray(c.formato)) c.formato = [...c.formato];
@@ -174,6 +193,11 @@ function normalizeInitial(initial) {
   return c;
 }
 
+/**
+ * Transforma el estado del UI en criterios consumibles por el filtro.
+ * @param {Object} ui - Estado del UI de filtros.
+ * @returns {Object} Criterios para filterProducts.
+ */
 export function toFilterCriteria(ui) {
   const crit = {};
   if (ui.minPrecio !== '') crit.minPrecio = Number(ui.minPrecio);
