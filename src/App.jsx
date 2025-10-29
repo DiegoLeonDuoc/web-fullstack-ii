@@ -10,6 +10,7 @@ import Contacto from './pages/Contacto';
 import Registro from './pages/Registro';
 import Login from './pages/Login';
 import Catalogo from './pages/Catalogo';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/contacto" element={<Contacto/>} />
           <Route path="/registro" element={<Registro/>} />
           <Route path="/login" element={<Login/>} />
+          <Route path="/dashboard" element={<Dashboard/>} />
         </Routes>
       </main>
       <Footer/>

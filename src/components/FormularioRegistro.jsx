@@ -10,7 +10,7 @@ import {
   isValidPassword,
   isValidAge,
 } from "../utils/Validaciones";
-import Storage from '../utils/Storage'
+import Storage from '../utils/UserStorage'
 
 function FormularioRegistro() {
   const navigate = useNavigate();

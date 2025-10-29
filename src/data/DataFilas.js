@@ -1,35 +1,35 @@
 function DataFilas() {
 
-  const artistasSlides = [
-    [
-      <a className="ficha" href="/producto">Taylor Swift</a>,
-      <a className="ficha" href="/producto">Drake</a>,
-      <a className="ficha" href="/producto">Bad Bunny</a>,
-      <a className="ficha" href="/producto">The Weeknd</a>,
-      <a className="ficha" href="/producto">BTS</a>,
-    ],
-    [
-      <a className="ficha" href="/producto">Billie Eilish</a>,
-      <a className="ficha" href="/producto">Ed Sheeran</a>,
-      <a className="ficha" href="/producto">Ariana Grande</a>,
-      <a className="ficha" href="/producto">Post Malone</a>,
-      <a className="ficha" href="/producto">Justin Bieber</a>,
-    ],
-    [
-      <a className="ficha" href="/producto">Karol G</a>,
-      <a className="ficha" href="/producto">Olivia Rodrigo</a>,
-      <a className="ficha" href="/producto">Harry Styles</a>,
-      <a className="ficha" href="/producto">Dua Lipa</a>,
-      <a className="ficha" href="/producto">J Balvin</a>,
-    ],
-    [
-      <a className="ficha" href="/producto">Rihanna</a>,
-      <a className="ficha" href="/producto">SZA</a>,
-      <a className="ficha" href="/producto">Travis Scott</a>,
-      <a className="ficha" href="/producto">BLACKPINK</a>,
-      <a className="ficha" href="/producto">Shawn Mendes</a>,
-    ],
-];
+  // const artistasSlides = [
+  //   [
+  //     <a className="ficha" href="/producto">Taylor Swift</a>,
+  //     <a className="ficha" href="/producto">Drake</a>,
+  //     <a className="ficha" href="/producto">Bad Bunny</a>,
+  //     <a className="ficha" href="/producto">The Weeknd</a>,
+  //     <a className="ficha" href="/producto">BTS</a>,
+  //   ],
+  //   [
+  //     <a className="ficha" href="/producto">Billie Eilish</a>,
+  //     <a className="ficha" href="/producto">Ed Sheeran</a>,
+  //     <a className="ficha" href="/producto">Ariana Grande</a>,
+  //     <a className="ficha" href="/producto">Post Malone</a>,
+  //     <a className="ficha" href="/producto">Justin Bieber</a>,
+  //   ],
+  //   [
+  //     <a className="ficha" href="/producto">Karol G</a>,
+  //     <a className="ficha" href="/producto">Olivia Rodrigo</a>,
+  //     <a className="ficha" href="/producto">Harry Styles</a>,
+  //     <a className="ficha" href="/producto">Dua Lipa</a>,
+  //     <a className="ficha" href="/producto">J Balvin</a>,
+  //   ],
+  //   [
+  //     <a className="ficha" href="/producto">Rihanna</a>,
+  //     <a className="ficha" href="/producto">SZA</a>,
+  //     <a className="ficha" href="/producto">Travis Scott</a>,
+  //     <a className="ficha" href="/producto">BLACKPINK</a>,
+  //     <a className="ficha" href="/producto">Shawn Mendes</a>,
+  //   ],
+// ];
 
   // const albumImg = "https://lh3.googleusercontent.com/68eGl8DSkl7mleAJqQP6Ata_ZqQEB743Tq14CDu3KQQRSv54kOUFWivzsJ_oPFqrrdvnfihRVjXUEM4=w1440-h810-l90-rj";
   const viniloImg = "/images/Vinilo.png";
@@ -66,7 +66,7 @@ function DataFilas() {
 
 
   return {
-    artistasSlides,
+    // artistasSlides,
     recomendacionesSlides,
     mejoresSlides
   };

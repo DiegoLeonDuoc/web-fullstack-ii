@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Auth } from '../utils/Auth';
 import { isValidEmail } from '../utils/Validaciones';
-import Storage from '../utils/Storage';
+import Storage from '../utils/UserStorage';
 import '../styles/login.css'
 
 const Login = () => {

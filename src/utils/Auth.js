@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Storage from './Storage';
+import Storage from './UserStorage';
 
 export const Auth = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

@@ -4,7 +4,7 @@
 const mockUsers = [
   {
     id: 1,
-    rut: "12.345.678-9",
+    rut: "12.345.678-5",
     age: "30",
     firstName: "Juan",
     lastName: "Pérez",
@@ -16,7 +16,7 @@ const mockUsers = [
   },
   {
     id: 2,
-    rut: "98.765.432-1",
+    rut: "11.111.111-1",
     age: "25",
     firstName: "María",
     lastName: "González",
@@ -28,7 +28,7 @@ const mockUsers = [
   },
   {
     id: 3,
-    rut: "11.223.344-5",
+    rut: "11.223.344-K",
     age: "35",
     firstName: "Carlos",
     lastName: "Rodríguez",
