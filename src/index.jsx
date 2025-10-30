@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {BrowserRouter as Router} from 'react-router-dom';
 import App from './App';
+import { ShoppingCartProvider } from './components/ShoppingCartContext';
 
 // Bootstrap CSS & JS
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -18,6 +19,8 @@ import './styles/footer.css';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Router>
-    <App />
+    <ShoppingCartProvider>
+      <App />
+    </ShoppingCartProvider>
   </Router>
 );

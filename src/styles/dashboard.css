@@ -1,0 +1,88 @@
+/* Dashboard-specific styles */
+
+.dashboard-container {
+  background: #000;
+  color: #fff;
+  padding: 24px 18px 32px;
+  border-radius: 12px;
+}
+
+.dashboard-container h2, .dashboard-container th {
+  color: #fff;
+}
+
+.dashboard-container .form-control,
+.dashboard-container input,
+.dashboard-container textarea {
+  background: #141414;
+  color: #fff;
+  border: 1px solid #333;
+}
+
+.dashboard-container .form-control:focus {
+  border-color: #007bff;
+  background: #181d23;
+}
+
+.dashboard-container .table {
+  background: #111;
+  color: #fff;
+  border-radius: 9px;
+  margin-bottom: 0;
+}
+
+.dashboard-container .table thead tr {
+  background: #191919;
+}
+
+.dashboard-container .table th, .dashboard-container .table td {
+  border-color: #333;
+  vertical-align: middle;
+}
+
+.dashboard-container .table th {
+  font-size: 1.01rem;
+  font-weight: 600;
+}
+
+.dashboard-container .table td {
+  font-size: 0.97rem;
+}
+
+/* Acciones column buttons row fill */
+.dashboard-container .table td.d-flex {
+  gap: 0.5rem;
+  height: 100%;
+  align-items: stretch;
+  justify-content: center;
+}
+.dashboard-container .table td.d-flex button {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 38px;
+}
+
+/* Button styling tweaks */
+.dashboard-container .btn-outline-primary {
+  border-color: #0d6efd;
+  color: #0d6efd;
+  background: transparent;
+}
+.dashboard-container .btn-outline-primary:hover {
+  background: #0d6efd;
+  color: #fff;
+}
+.dashboard-container .btn-outline-danger {
+  border-color: #dc3545;
+  color: #ff6363;
+  background: transparent;
+}
+.dashboard-container .btn-outline-danger:hover {
+  background: #dc3545;
+  color: #fff;
+}
+
+/* Ensure proper label style on muted/no data */
+.dashboard-container .text-muted {
+  color: #aaa !important;
+}

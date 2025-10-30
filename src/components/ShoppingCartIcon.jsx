@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useShoppingCart } from './ShoppingCartContext';
+import '../styles/shoppingcarticon.css';
 
 export default function ShoppingCartIcon() {
   const { cartCount } = useShoppingCart();
@@ -9,13 +10,7 @@ export default function ShoppingCartIcon() {
       <Link to="/carrito">
         <i className="fa fa-shopping-cart"></i>
         {cartCount > 0 && (
-          <span style={{
-            position: 'absolute', top: -6, right: -10,
-            background: '#c33', color: '#fff', borderRadius: '50%',
-            width: 20, height: 20,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '0.95rem', fontWeight: 'bold',
-          }}>{cartCount}</span>
+          <span className="cart-badge">{cartCount}</span>
         )}
       </Link>
     </div>

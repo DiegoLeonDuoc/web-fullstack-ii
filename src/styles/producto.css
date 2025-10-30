@@ -124,3 +124,8 @@
 .product-page .review-header {
   justify-content: space-between;
 }
+
+.added-feedback {
+  margin-left: 8px;
+  color: green;
+}

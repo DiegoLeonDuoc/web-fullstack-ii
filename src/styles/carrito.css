@@ -42,6 +42,14 @@
     font-size: 1.1rem;
 }
 
+.cart-item-thumb-wrapper {
+  flex: 0 0 84px;
+  margin-right: 12px;
+}
+.cart-item-info {
+  flex: 1;
+}
+
 /* Responsive tweaks for small screens */
 @media (max-width: 800px) {
     .product-thumb {

@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Image, Button, Form } from "react-bootstrap";
+import { useShoppingCart } from '../components/ShoppingCartContext';
 
 import productos from "../data/Productos";
 import dataReviews from "../data/DataReviews";
@@ -15,6 +16,9 @@ export default function ProductPage() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [qty, setQty] = useState(1);
+  const [added, setAdded] = useState(false);
+  const { addItem } = useShoppingCart();
 
   useEffect(() => {
     const found = productos.find((p) => p.id === id);
@@ -28,6 +32,13 @@ export default function ProductPage() {
     ? product.anio
     : (Object.values(product).find((v) => typeof v === 'string' && /^\d{4}$/.test(v)) || '');
 
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    addItem(product, Number(qty));
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1200);
+  };
+
   return (
     <Container className="container product-page">
       <Row>
@@ -36,17 +47,14 @@ export default function ProductPage() {
             <Image id="main-image" src={product.img} alt="Portada del álbum" />
           </Card>
         </Col>
-
         <Col className="info-column">
           <div className="product-info">
             <h2 className="product-title">{product.titulo}</h2>
-
             <div className="price-rating">
               <div>
                 <span className="price-label">Precio:</span>{" "}
                 <span className="price-value">{product.precio}</span>
               </div>
-
               <div className="rating">
                 <div className="stars">{estrellas(product.rating)}</div>
                 <div className="rating-count">
@@ -54,25 +62,29 @@ export default function ProductPage() {
                 </div>
               </div>
             </div>
-
             <p className="product-format">
               <strong>Formato:</strong> {product.formato}
             </p>
             <p className="product-desc">{product.descripcion}</p>
-
-            <Form className="purchase-controls">
+            <Form className="purchase-controls" onSubmit={handleAddToCart}>
               <Form.Label htmlFor="qty">Cantidad</Form.Label>
-              <Form.Control id="qty" type="number" min={1} defaultValue={1} className="qty-input" />
-              <Button className="btn-primary">
+              <Form.Control
+                id="qty"
+                type="number"
+                min={1}
+                value={qty}
+                className="qty-input"
+                onChange={e => setQty(e.target.value)}
+              />
+              <Button type="submit" className="btn-primary ms-2">
                 <i className="fa fa-shopping-cart" /> Agregar al carrito
               </Button>
-              <Button className="btn-outline-light">
+              <span className={added ? 'added-feedback' : ''}>{added ? '¡Agregado!' : ''}</span>
+              <Button className="btn-outline-light ms-2" type="button">
                 <i className="fa fa-heart" /> Favorito
               </Button>
             </Form>
-
             <hr />
-
             <div className="product-meta">
               <div>
                 <strong>Artista:</strong> {product.artista}
@@ -87,13 +99,10 @@ export default function ProductPage() {
           </div>
         </Col>
       </Row>
-
       <hr />
-
       <Row className="reviews-section">
         <Col>
           <h3>Reseñas y comentarios</h3>
-
           {reviews.map((rev) => (
             <Card key={rev.id} className="review">
               <div className="review-header">
