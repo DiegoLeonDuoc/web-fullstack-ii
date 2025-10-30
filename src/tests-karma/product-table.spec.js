@@ -1,6 +1,8 @@
 import React from "react";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 import ProductTable from "../components/ProductTable";
+const cdImg = "/base/public/images/CD.png";
+const viniloImg = "/base/public/images/Vinilo.png";
 
 // Revisamos que la tabla pinte todas las filas y dispare los botones de editar/eliminar.
 describe("ProductTable (Jasmine)", () => {
@@ -10,8 +12,8 @@ describe("ProductTable (Jasmine)", () => {
 
   it("renderiza todas las filas para los productos entregados", () => {
     const productos = [
-      { id: "p1", titulo: "Disco Uno", artista: "Artista A", formato: "CD", anio: 2020, etiqueta: "Label", precio: "$9.990", img: "/img/1.png" },
-      { id: "p2", titulo: "Disco Dos", artista: "Artista B", formato: "Vinilo", anio: 1999, etiqueta: "Label", precio: "$12.990", img: "/img/2.png" },
+      { id: "p1", titulo: "Disco Uno", artista: "Artista A", formato: "CD", anio: 2020, etiqueta: "Label", precio: "$9.990", img: cdImg },
+      { id: "p2", titulo: "Disco Dos", artista: "Artista B", formato: "Vinilo", anio: 1999, etiqueta: "Label", precio: "$12.990", img: viniloImg },
     ];
 
     render(

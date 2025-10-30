@@ -49,6 +49,8 @@ module.exports = function (config) {
     frameworks: ['jasmine'],
     files: [
       { pattern: bundlePath, watched: false, nocache: true },
+        //  sirve los archivos estáticos de la carpeta public/images
+      { pattern: 'public/images/**/*', watched: false, included: false, served: true },
     ],
     preprocessors: {},
     reporters: ['progress'],
