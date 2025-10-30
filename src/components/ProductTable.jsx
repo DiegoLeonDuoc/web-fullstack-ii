@@ -1,5 +1,12 @@
 import { Table, Button, Image } from 'react-bootstrap';
 
+function formatPriceCLP(price) {
+  if (typeof price === 'number') price = price.toString();
+  const n = parseInt(price.replace(/[^\d]/g, ''));
+  if (!n) return '$0';
+  return '$' + n.toLocaleString('es-CL');
+}
+
 /**
  * Tabla de productos con acciones de edición/eliminación.
  * @param {Object} props
@@ -13,7 +20,7 @@ export default function ProductTable({ products, onEdit, onDelete }) {
     return <p className="text-center text-muted mt-3">No hay productos registrados.</p>;
 
   return (
-    <Table striped bordered hover responsive>
+    <Table className="dashboard-table" responsive>
       <thead>
         <tr>
           <th>Imagen</th>
@@ -28,21 +35,23 @@ export default function ProductTable({ products, onEdit, onDelete }) {
       </thead>
       <tbody>
         {products.map((p) => (
-          <tr key={p.id}>
+          <tr className="dashboard-table-row" key={p.id}>
             <td><Image src={p.img} alt={p.titulo} style={{ width: '50px' }} /></td>
             <td>{p.titulo}</td>
             <td>{p.artista}</td>
             <td>{p.formato}</td>
             <td>{p.año}</td>
             <td>{p.etiqueta}</td>
-            <td>{p.precio}</td>
-            <td className="d-flex gap-2">
-              <Button size="sm" variant="outline-primary" onClick={() => onEdit(p)}>
-                Editar
-              </Button>
-              <Button size="sm" variant="outline-danger" onClick={() => onDelete(p.id)}>
-                Eliminar
-              </Button>
+            <td>{formatPriceCLP(p.precio)}</td>
+            <td className="actions-cell">
+              <div className="actions-wrapper d-flex gap-2">
+                <Button size="sm" variant="primary" onClick={() => onEdit(p)}>
+                  Editar
+                </Button>
+                <Button size="sm" variant="danger" onClick={() => onDelete(p.id)}>
+                  Eliminar
+                </Button>
+              </div>
             </td>
           </tr>
         ))}

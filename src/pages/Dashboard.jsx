@@ -36,8 +36,8 @@ export default function Dashboard() {
 
   const handleAddOrUpdate = (data) => {
     if (selected) {
-      const updatedList = updateProduct(selected.id, data);
-      setProducts(updatedList);
+      updateProduct(selected.id, data);
+      setProducts(getProducts());
       setSelected(null);
     } else {
       const newProduct = addProduct(data);

@@ -11,78 +11,122 @@
   color: #fff;
 }
 
-.dashboard-container .form-control,
-.dashboard-container input,
-.dashboard-container textarea {
-  background: #141414;
+.dashboard-container label,
+.dashboard-container .form-label, /* For bootstrap Form.Label */
+.dashboard-container .form-group label {  /* fallback */
+  color: #fff !important;
+  font-weight: 500;
+}
+
+.dashboard-container .form-control, .dashboard-container input, .dashboard-container textarea {
+  background: #181818;
   color: #fff;
   border: 1px solid #333;
 }
 
-.dashboard-container .form-control:focus {
-  border-color: #007bff;
+.dashboard-container .form-control:focus,
+.dashboard-container input:focus,
+.dashboard-container textarea:focus {
+  color: #fff;
   background: #181d23;
+  border-color: #007bff;
 }
 
-.dashboard-container .table {
-  background: #111;
+.dashboard-container .form-control::placeholder,
+.dashboard-container input::placeholder,
+.dashboard-container textarea::placeholder {
+  color: #bdbdbd;
+  opacity: 1;
+}
+
+/* Custom dashboard ProductTable */
+.dashboard-table {
+  background: #16171a;
   color: #fff;
   border-radius: 9px;
   margin-bottom: 0;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-.dashboard-container .table thead tr {
-  background: #191919;
+.dashboard-table thead tr {
+  background: #1a1b1f;
 }
 
-.dashboard-container .table th, .dashboard-container .table td {
-  border-color: #333;
+.dashboard-table th, .dashboard-table td {
+  border-color: #23242a !important;
+  background: #1a1b1f;
   vertical-align: middle;
+  color: #fff;
 }
 
-.dashboard-container .table th {
+.dashboard-table tbody tr {
+  background: #181818;
+}
+
+.dashboard-table th {
   font-size: 1.01rem;
   font-weight: 600;
+  background: #191a1a !important;
+  border-bottom: 2px solid #23242a;
 }
 
-.dashboard-container .table td {
-  font-size: 0.97rem;
+.dashboard-table td {
+  font-size: 1rem;
+  background: #181818;
+  color: #fff;
+  border-bottom: 1.5px solid #23242a !important;
 }
 
-/* Acciones column buttons row fill */
-.dashboard-container .table td.d-flex {
-  gap: 0.5rem;
+.dashboard-table-row td, .dashboard-table-row th {
+  background: #181818 !important;
+  color: #fff !important;
+  border-color: #23242a !important;
+}
+
+/* Acciones cell full height, but buttons DEFAULT size */
+.dashboard-table .actions-cell {
   height: 100%;
-  align-items: stretch;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  background: #181818;
+  vertical-align: middle !important;
+}
+.dashboard-table .actions-wrapper {
+  height: 100%;
+  width: 100%;
+  align-items: center;
   justify-content: center;
 }
-.dashboard-container .table td.d-flex button {
-  flex: 1 1 0;
-  min-width: 0;
-  min-height: 38px;
-}
 
-/* Button styling tweaks */
-.dashboard-container .btn-outline-primary {
-  border-color: #0d6efd;
-  color: #0d6efd;
-  background: transparent;
-}
-.dashboard-container .btn-outline-primary:hover {
-  background: #0d6efd;
+/* Filled color buttons for actions */
+.dashboard-table .btn-primary, .dashboard-table .btn-primary:focus {
+  background: #007bff;
+  border-color: #007bff;
   color: #fff;
 }
-.dashboard-container .btn-outline-danger {
-  border-color: #dc3545;
-  color: #ff6363;
-  background: transparent;
+.dashboard-table .btn-primary:hover {
+  background: #0056b3;
 }
-.dashboard-container .btn-outline-danger:hover {
+.dashboard-table .btn-danger, .dashboard-table .btn-danger:focus {
   background: #dc3545;
+  border-color: #dc3545;
   color: #fff;
 }
+.dashboard-table .btn-danger:hover {
+  background: #a71d2a;
+}
 
-/* Ensure proper label style on muted/no data */
 .dashboard-container .text-muted {
   color: #aaa !important;
+}
+
+th {
+  color: white !important;
+}
+
+form select {
+  background-color: #181818 !important;
+  color: #fff !important;
+  border-color: #333 !important;
 }

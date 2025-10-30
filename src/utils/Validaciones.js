@@ -84,3 +84,13 @@ export function isValidAge(age) {
   const n = parseInt(age, 10);
   return n >= 18 && n <= 120;
 }
+
+/**
+ * Verifica si el precio es válido (>= $1.000)
+ * @param {string|number} price Precio a validar
+ * @returns {boolean}
+ */
+export function isValidPrice(price) {
+  let n = typeof price === 'string' ? parseInt(price, 10) : price;
+  return n >= 1000;
+}
