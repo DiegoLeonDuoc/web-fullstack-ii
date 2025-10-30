@@ -12,17 +12,22 @@ import { initStorage, getProducts } from '../utils/MusicStorage';
  * @returns {JSX.Element}
  */
 const FilaDeProductos = ({ productos }) => {
+  // Objeto reactivo a cambios empieza con productos o vacio
   const [items, setItems] = useState(productos || []);
-
+  // Función ejecutada al renderizar el objeto
   useEffect(() => {
+    // Verifica que productos sea Array y tenga valores
     if (Array.isArray(productos) && productos.length) {
+      // De ser así el items será el array ingresado 
       setItems(productos);
       return;
     }
+    // Si no, se inicializará el MusicStorage y se obtendrán los productos de ahí
     initStorage();
     setItems(getProducts());
   }, [productos]);
 
+  // Para cada producto se genera una columna con una tarjeta todo en una fila
   return (
     <div className="fila-productos">
       <Row id="fila">

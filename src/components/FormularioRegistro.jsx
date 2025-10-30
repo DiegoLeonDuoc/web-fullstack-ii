@@ -52,7 +52,6 @@ function FormularioRegistro() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // recompute validity on every relevant change
   // Recalcula banderas de validez cada vez que cambien estos campos
   useEffect(() => {
     setValid({
@@ -63,7 +62,6 @@ function FormularioRegistro() {
     });
   }, [formData.rut, formData.age, formData.email, formData.password]);
 
-  // keep warning texts in sync with the validity flags
   // Mantiene sincronizados los mensajes de advertencia con las banderas de validez
   useEffect(() => {
     setWarnings({
