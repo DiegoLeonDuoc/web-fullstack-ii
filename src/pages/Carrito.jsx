@@ -12,7 +12,7 @@ function CartItem({ item, onUpdateQty, onRemove }) {
       <div className="cart-item-info">
         <div className="product-title">{item.titulo}</div>
         <div><span>{item.formato}</span> — <span>{item.artista}</span></div>
-        <span>{item.precio}</span>
+        <span>{('$ ' + Number(item.precio||0).toLocaleString('es-CL'))}</span>
       </div>
       <Form.Control
         className="qty-input mx-2"
@@ -52,9 +52,18 @@ export default function Carrito() {
         <Col md={4}>
           <Card className="checkout-card p-4">
             <h5>Resumen</h5>
-            <div className="d-flex justify-content-between py-2">
-              <span>Total productos:</span>
-              <span>{cart.reduce((a, b) => a + (b.qty || 0), 0)}</span>
+            {/* Detalle por producto */}
+            <div className="py-2">
+              {cart.map((item) => {
+                const unit = Number((item.precio || '').replace(/[^\d]/g, ''));
+                const subtotal = unit * (item.qty || 1);
+                return (
+                  <div className="d-flex justify-content-between py-1 resumen-item" key={item.id}>
+                    <span className="resumen-left">{item.titulo} x {item.qty}</span>
+                    <span className="resumen-right">${subtotal.toLocaleString('es-CL')}</span>
+                  </div>
+                );
+              })}
             </div>
             <div className="d-flex justify-content-between py-2 border-top">
               <span>Total a pagar:</span>

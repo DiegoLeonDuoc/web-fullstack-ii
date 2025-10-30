@@ -32,9 +32,22 @@ export const saveProducts = (products) => {
  * @param {Object} product - Producto a agregar.
  * @returns {Object} Producto creado con id asignado.
  */
+
+export function generateId(titulo, formato) {
+  const clean = (str) =>
+    str
+      .toLowerCase()
+      .normalize("NFD") // remove accents
+      .replace(/[\u0300-\u036f]/g, "") // remove diacritics
+      .replace(/[^a-z0-9]+/g, "-") // replace non-alphanum with dash
+      .replace(/^-+|-+$/g, ""); // trim leading/trailing dash
+
+  return `${clean(titulo)}-${clean(formato)}`;
+}
+
 export const addProduct = (product) => {
   const products = getProducts();
-  const newProduct = { ...product, id: product.id || Date.now().toString() };
+  const newProduct = { ...product, id: product.id || generateId(product.titulo, product.formato) };
   products.push(newProduct);
   saveProducts(products);
   return newProduct;

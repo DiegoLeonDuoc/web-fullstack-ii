@@ -3,11 +3,10 @@ import { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Image, Button, Form } from "react-bootstrap";
 import { useShoppingCart } from '../components/ShoppingCartContext';
 
-import productos from "../data/Productos";
 import dataReviews from "../data/DataReviews";
 import estrellas from "../components/Estrellas";
 import "../styles/producto.css";
-
+import { getProducts } from '../utils/MusicStorage';
 /**
  * Página de detalle de producto (por id en URL).
  * @returns {JSX.Element}
@@ -21,7 +20,7 @@ export default function ProductPage() {
   const { addItem } = useShoppingCart();
 
   useEffect(() => {
-    const found = productos.find((p) => p.id === id);
+    const found = getProducts().find((p) => p.id === id);
     setProduct(found || null);
     setReviews(dataReviews.filter((r) => r.productNom === id));
   }, [id]);

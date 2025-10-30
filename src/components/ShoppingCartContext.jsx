@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
-  getCart, saveCart, addToCart, updateItemQty, removeItem, getCartCount, getCartTotal
+  getCart, saveCart, addToCart, updateItemQty, removeItem, getCartTotal
 } from '../utils/CartStorage';
 
 const ShoppingCartContext = createContext();
@@ -11,17 +11,14 @@ export function ShoppingCartProvider({ children }) {
   // Sync local changes
   useEffect(() => {
     saveCart(cart);
-    window.dispatchEvent(new Event('cartChanged'));
   }, [cart]);
 
   // Listen for cross-tab changes
   useEffect(() => {
     const syncCart = () => setCart(getCart());
     window.addEventListener('storage', syncCart);
-    window.addEventListener('cartChanged', syncCart);
     return () => {
       window.removeEventListener('storage', syncCart);
-      window.removeEventListener('cartChanged', syncCart);
     };
   }, []);
 
