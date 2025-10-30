@@ -1,8 +1,9 @@
 import React from "react";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 import ProductTable from "../components/ProductTable";
-const viniloImg = "/images/Vinilo.png";
-const cdImg = "/images/CD.png";
+const cdImg = "/base/public/images/CD.png";
+const viniloImg = "/base/public/images/Vinilo.png";
+
 // Revisamos que la tabla pinte todas las filas y dispare los botones de editar/eliminar.
 describe("ProductTable (Jasmine)", () => {
   afterEach(() => {
