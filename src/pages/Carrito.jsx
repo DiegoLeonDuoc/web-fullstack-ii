@@ -12,7 +12,7 @@ function CartItem({ item, onUpdateQty, onRemove }) {
       <div className="cart-item-info">
         <div className="product-title">{item.titulo}</div>
         <div><span>{item.formato}</span> — <span>{item.artista}</span></div>
-        <span>{('$ ' + Number(item.precio||0).toLocaleString('es-CL'))}</span>
+        <span>{item.precio.includes('$') ? item.precio : ('$' + Number(item.precio||0).toLocaleString('es-CL'))}</span>
       </div>
       <Form.Control
         className="qty-input mx-2"
