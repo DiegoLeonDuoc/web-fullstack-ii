@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import '../styles/tarjetaproducto.css';
 
-
 /**
  * Tarjeta visual de un producto del catálogo.
  * @param {Object} props
@@ -9,26 +8,17 @@ import '../styles/tarjetaproducto.css';
  * @returns {JSX.Element}
  */
 const TarjetaProducto = ({producto}) => {
-  
-  const linkProducto = function(producto) {
-    // Si existe un id, usar para URL estable; si no, generar slug previo
-    if (producto && producto.id) {
-      return `/producto/${producto.id}`
-    }
-    return (
-      '/producto/'+(producto.titulo.toLowerCase()+' '+producto.formato.toLowerCase()).replace(/\s+/g, '-')
-    )
-  }
+  const linkProducto = `/producto/${producto.id}`;
 
   return (
     <div className="card">
-      <Link to={linkProducto(producto)}>
+      <Link to={linkProducto}>
         <img id='imagen-carta' src={producto.img} alt={producto.alt} />
       </Link>
       <div className="card-body">
         <small id="formato">{producto.formato}</small>
         <small id="art-titulo">{producto.artista} - {producto.titulo}</small>
-        <small id="precio">{'$ ' + producto.precio}</small>
+        <small id="precio">{producto.precio.includes('$') ? producto.precio : ('$' + Number(producto.precio||0).toLocaleString('es-CL'))}</small>
       </div>
     </div>
   );

@@ -4,7 +4,8 @@ const STORAGE_KEY = 'music_products';
 
 export const initStorage = () => {
   if (!localStorage.getItem(STORAGE_KEY)) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataProducto));
+    const initial = [...dataProducto];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
   }
 };
 
@@ -33,7 +34,7 @@ export const saveProducts = (products) => {
  */
 export const addProduct = (product) => {
   const products = getProducts();
-  const newProduct = { ...product, id: Date.now().toString() };
+  const newProduct = { ...product, id: product.id || Date.now().toString() };
   products.push(newProduct);
   saveProducts(products);
   return newProduct;

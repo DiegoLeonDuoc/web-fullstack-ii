@@ -16,6 +16,9 @@ import './styles/index.css';
 import './styles/header.css';
 import './styles/footer.css';
 
+// import { initStorage } from "./utils/MusicStorage"; 
+// initStorage();
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Router>
