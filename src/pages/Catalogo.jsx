@@ -2,9 +2,8 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import SidebarFiltros, { toFilterCriteria } from '../components/SidebarFiltros';
 import TarjetaProducto from '../components/TarjetaProducto';
-import dataProducto from '../data/Productos';
 import { filterProducts } from '../utils/Filters';
-
+import { getProducts } from '../utils/MusicStorage';
 /**
  * Página de catálogo con filtros y listado de productos.
  * @returns {JSX.Element}
@@ -21,7 +20,7 @@ export default function Catalogo() {
   }, []);
 
   const productos = useMemo(() => {
-    return filterProducts(dataProducto, criteria);
+    return filterProducts(getProducts(), criteria);
   }, [criteria]);
 
   return (
@@ -29,7 +28,7 @@ export default function Catalogo() {
       <Row>
         <Col md={3}>
           <SidebarFiltros
-            productos={dataProducto}
+            productos={getProducts()}
             initial={preset}
             onChange={(c) => setCriteria(c)}
           />
@@ -44,7 +43,7 @@ export default function Catalogo() {
             ))}
             {productos.length === 0 && (
               <Col>
-                <div className="text-muted">No hay productos que coincidan con los filtros.</div>
+                <div className="text" style={{ color: 'white !important' }}>No hay productos que coincidan con los filtros.</div>
               </Col>
             )}
           </Row>
