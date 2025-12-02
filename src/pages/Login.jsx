@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Auth } from '../utils/Auth';
-import { isValidEmail } from '../utils/Validaciones';
+import { isValidEmail, isValidPassword } from '../utils/Utilidades';
 import Storage from '../utils/UserStorage';
 import '../styles/login.css'
 
@@ -17,7 +17,7 @@ const Login = () => {
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const { login } = Auth();
   const navigate = useNavigate();
 
@@ -40,46 +40,63 @@ const Login = () => {
   // Validación mínima en cliente antes de intentar autenticarse
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.email) {
       newErrors.email = 'El correo electrónico es requerido';
     } else if (!isValidEmail(formData.email)) {
       newErrors.email = 'El formato del correo electrónico es inválido';
     }
-    
+
     if (!formData.password) {
       newErrors.password = 'La contraseña es requerida';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // Envío del formulario: valida, llama a verifyCredentials (que hashea internamente)
+  // Envío del formulario: llama a la API de backend
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
-      // Use Storage directly for authentication (async, hashing inside)
-      const result = await Storage.verifyCredentials(formData.email, formData.password);
-      
-      if (result.success) {
-        login(result.user);
-        navigate("/dashboard");
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Guardar usuario con token y RUT
+        login({
+          email: formData.email,
+          username: data.email, // Assuming backend returns email as username or we use email for username
+          roles: data.roles,
+          token: data.token,
+          rut: data.rut // Extract and store rut
+        });
+        navigate('/'); // Navigate to home page
       } else {
-        setErrors({ 
-          submit: result.error || 'Credenciales inválidas. Por favor, intenta de nuevo.' 
+        setErrors({
+          submit: 'Credenciales inválidas. Por favor, intenta de nuevo.'
         });
       }
     } catch (error) {
-      setErrors({ 
-        submit: 'Error al iniciar sesión. Por favor, intenta de nuevo.' 
+      console.error(error);
+      setErrors({
+        submit: 'Error al iniciar sesión. Por favor, intenta de nuevo.'
       });
     } finally {
       setIsSubmitting(false);
@@ -88,31 +105,31 @@ const Login = () => {
 
   return (
     <div className="login-page">
-      
+
       <main className="container my-5">
         <div className="row justify-content-center">
           <div className="col-sm-10 col-md-6 col-lg-4">
             <div className="card">
               <div className="card-body">
                 <h2 className="card-title">Iniciar sesión</h2>
-                
+
                 {errors.submit && (
                   <div className="alert alert-danger" role="alert">
                     {errors.submit}
                   </div>
                 )}
-                
+
                 <form id="loginForm" onSubmit={handleSubmit} noValidate>
                   <div className="form-group">
                     <label className="label-input" htmlFor="email">Correo electrónico</label>
-                    <input 
-                      type="email" 
+                    <input
+                      type="email"
                       className={`form-control ${errors.email ? 'is-invalid' : ''}`}
-                      id="email" 
-                      name="email" 
+                      id="email"
+                      name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="tu@correo.com" 
+                      placeholder="tu@correo.com"
                       required
                     />
                     {errors.email && (
@@ -122,14 +139,14 @@ const Login = () => {
 
                   <div className="form-group">
                     <label className="label-input" htmlFor="password">Contraseña</label>
-                    <input 
-                      type="password" 
+                    <input
+                      type="password"
                       className={`form-control ${errors.password ? 'is-invalid' : ''}`}
-                      id="password" 
-                      name="password" 
+                      id="password"
+                      name="password"
                       value={formData.password}
                       onChange={handleChange}
-                      placeholder="●●●●●●●●" 
+                      placeholder="●●●●●●●●"
                       required
                     />
                     {errors.password && (
@@ -137,8 +154,8 @@ const Login = () => {
                     )}
                   </div>
                   <div className='text-center'>
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       className="btn btn-primary btn-block"
                       disabled={isSubmitting}
                     >
@@ -158,7 +175,7 @@ const Login = () => {
           </div>
         </div>
       </main>
-      
+
     </div>
   );
 };

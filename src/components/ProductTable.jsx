@@ -1,11 +1,5 @@
 import { Table, Button, Image } from 'react-bootstrap';
-
-function formatPriceCLP(price) {
-  if (typeof price === 'number') price = price.toString();
-  const n = parseInt(price.replace(/[^\d]/g, ''));
-  if (!n) return '$0';
-  return '$' + n.toLocaleString('es-CL');
-}
+import { formatPrice } from '../utils/Utilidades';
 
 /**
  * Tabla de productos con acciones de edición/eliminación.
@@ -42,7 +36,7 @@ export default function ProductTable({ products, onEdit, onDelete }) {
             <td>{p.formato}</td>
             <td>{p.año}</td>
             <td>{p.etiqueta}</td>
-            <td>{formatPriceCLP(p.precio)}</td>
+            <td>{formatPrice(p.precio)}</td>
             <td className="actions-cell">
               <div className="actions-wrapper d-flex gap-2">
                 <Button size="sm" variant="primary" onClick={() => onEdit(p)}>

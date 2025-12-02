@@ -14,7 +14,20 @@ function Header() {
   const { isLoggedIn, currentUser, logout } = Auth();
   const [showMenu, setShowMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  // Removed password hash visualization for cleaner UI
+
+  const displayName = currentUser
+    ? ([currentUser.firstName, currentUser.lastName].filter(Boolean).join(' ').trim()
+        || currentUser.email
+        || 'Usuario')
+    : '';
+
+  const avatarInitials = (() => {
+    const initials =
+      `${currentUser?.firstName?.charAt(0) || ''}${currentUser?.lastName?.charAt(0) || ''}`.trim();
+    if (initials) return initials.toUpperCase();
+    if (currentUser?.email) return currentUser.email.charAt(0).toUpperCase();
+    return null;
+  })();
 
   // Escuchar cambios de autenticación
   useEffect(() => {
@@ -24,7 +37,7 @@ function Header() {
     };
 
     window.addEventListener('authStateChanged', handleAuthChange);
-    
+
     return () => {
       window.removeEventListener('authStateChanged', handleAuthChange);
     };
@@ -59,7 +72,7 @@ function Header() {
             <li><Link to="/mision">Misión</Link></li>
             <li><Link to="/vision">Visión</Link></li>
             <li><Link to="/contacto">Contacto</Link></li>
-            {isLoggedIn && <li><Link to="/dashboard">Dashboard</Link></li>}
+            {isLoggedIn && currentUser?.roles?.includes('ROLE_ADMIN') && <li><Link to="/dashboard">Dashboard</Link></li>}
           </ul>
         </nav>
       </div>
@@ -92,33 +105,31 @@ function Header() {
               <button
                 type="button"
                 className="user-avatar btn btn-outline-light"
-                title={`${currentUser?.firstName} ${currentUser?.lastName}`}
+                title={displayName}
                 onClick={() => setShowUserMenu((s) => !s)}
               >
-                {currentUser ? (
-                  <span className="avatar-initials">
-                    {getInitials(currentUser.firstName, currentUser.lastName)}
-                  </span>
+                {avatarInitials ? (
+                  <span className="avatar-initials">{avatarInitials}</span>
                 ) : (
-                  <i className="fa fa-user"></i>
+                  <i className="fa fa-user" aria-hidden="true"></i>
                 )}
               </button>
               {showUserMenu && (
                 <div
                   className="dropdown-menu show"
-                  style={{ display: 'block', right: 0, left: 'auto', position: 'absolute', minWidth: '220px' }}
+                  style={{ display: 'block', right: 0, left: 'auto', position: 'absolute', minWidth: '240px' }}
                 >
                   <div className="px-3 py-2 border-bottom">
-                    <div className="small text-muted">Bienvenido</div>
-                    <strong>{currentUser?.firstName} {currentUser?.lastName}</strong>
+                    <div className="small text-muted">Conectado como</div>
+                    <strong>{displayName}</strong>
+                    {currentUser?.email && (
+                      <div className="small text-muted mt-1">{currentUser.email}</div>
+                    )}
+                    {currentUser?.roles?.includes('ROLE_ADMIN') && (
+                      <span className="badge bg-primary mt-2">Administrador</span>
+                    )}
                   </div>
-                  <button type="button" className="dropdown-item" onClick={() => { /* visual only */ }}>
-                    <i className="fa fa-user"></i> Perfil
-                  </button>
-                  <button type="button" className="dropdown-item" onClick={() => { /* visual only */ }}>
-                    <i className="fa fa-shopping-bag"></i> Mis compras
-                  </button>
-                  <button 
+                  <button
                     type="button"
                     onClick={handleLogout}
                     className="dropdown-item logout-btn"

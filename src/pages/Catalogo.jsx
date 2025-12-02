@@ -11,24 +11,35 @@ import { getProducts } from '../utils/MusicStorage';
 export default function Catalogo() {
   const [criteria, setCriteria] = useState({});
   const [preset, setPreset] = useState({});
+  const [allProducts, setAllProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Leer query params básicos (?formato=CD|Vinilo)...
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const formato = params.get('formato');
     if (formato) setPreset({ formato: [formato] });
+
+    const load = async () => {
+      const data = await getProducts();
+      setAllProducts(data);
+      setLoading(false);
+    };
+    load();
   }, []);
 
   const productos = useMemo(() => {
-    return filterProducts(getProducts(), criteria);
-  }, [criteria]);
+    return filterProducts(allProducts, criteria);
+  }, [allProducts, criteria]);
+
+  if (loading) return <div className="text-center mt-5">Cargando catálogo...</div>;
 
   return (
     <Container className="my-4">
       <Row>
         <Col md={3}>
           <SidebarFiltros
-            productos={getProducts()}
+            productos={allProducts}
             initial={preset}
             onChange={(c) => setCriteria(c)}
           />

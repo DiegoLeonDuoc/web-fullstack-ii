@@ -1,35 +1,52 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
-  getCart, saveCart, addToCart, updateItemQty, removeItem, getCartTotal
+  loadCart, getLocalCart, addToCart, updateItemQty, removeItem, getCartCount, getCartTotal
 } from '../utils/CartStorage';
 
 const ShoppingCartContext = createContext();
 
 export function ShoppingCartProvider({ children }) {
-  const [cart, setCart] = useState(() => getCart());
+  const [cart, setCart] = useState([]);
 
-  // Sync local changes
+  // Cargar carrito al inicio
   useEffect(() => {
-    saveCart(cart);
-  }, [cart]);
+    const init = async () => {
+      const data = await loadCart();
+      setCart(data);
+    };
+    init();
+  }, []);
 
-  // Listen for cross-tab changes
+  // Recargar carrito cuando cambia el estado de autenticación
   useEffect(() => {
-    const syncCart = () => setCart(getCart());
-    window.addEventListener('storage', syncCart);
+    const handleAuthChange = async () => {
+      const data = await loadCart();
+      setCart(data);
+    };
+
+    window.addEventListener('authStateChanged', handleAuthChange);
     return () => {
-      window.removeEventListener('storage', syncCart);
+      window.removeEventListener('authStateChanged', handleAuthChange);
     };
   }, []);
 
   const contextValue = {
     cart,
-    cartCount: cart.reduce((acc, item) => acc + (Number(item.qty)||0), 0),
-    cartTotal: getCartTotal(),
-    addItem: (product, qty=1) => setCart(addToCart(product, qty)),
-    updateQty: (id, qty) => setCart(updateItemQty(id, qty)),
-    removeItem: (id) => setCart(removeItem(id)),
-    clearCart: () => setCart([])
+    cartCount: getCartCount(cart),
+    cartTotal: getCartTotal(cart),
+    addItem: async (product, qty = 1) => {
+      const newCart = await addToCart(product, qty);
+      setCart(newCart);
+    },
+    updateQty: async (id, qty) => {
+      const newCart = await updateItemQty(id, qty);
+      setCart(newCart);
+    },
+    removeItem: async (id) => {
+      const newCart = await removeItem(id);
+      setCart(newCart);
+    },
+    clearCart: () => setCart([]) // TODO: Implementar vaciar en backend
   };
 
   return (

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap';
 import { useShoppingCart } from '../components/ShoppingCartContext';
+import { formatPrice } from '../utils/Utilidades';
 import '../styles/carrito.css';
 
 function CartItem({ item, onUpdateQty, onRemove }) {
@@ -12,7 +13,7 @@ function CartItem({ item, onUpdateQty, onRemove }) {
       <div className="cart-item-info">
         <div className="product-title">{item.titulo}</div>
         <div><span>{item.formato}</span> — <span>{item.artista}</span></div>
-        <span>{item.precio.includes('$') ? item.precio : ('$' + Number(item.precio||0).toLocaleString('es-CL'))}</span>
+        <span>{formatPrice(item.precio)}</span>
       </div>
       <Form.Control
         className="qty-input mx-2"
@@ -55,19 +56,19 @@ export default function Carrito() {
             {/* Detalle por producto */}
             <div className="py-2">
               {cart.map((item) => {
-                const unit = Number((item.precio || '').replace(/[^\d]/g, ''));
+                const unit = item.precio;
                 const subtotal = unit * (item.qty || 1);
                 return (
                   <div className="d-flex justify-content-between py-1 resumen-item" key={item.id}>
-                    <span className="resumen-left">{item.titulo} x {item.qty}</span>
-                    <span className="resumen-right">${subtotal.toLocaleString('es-CL')}</span>
+                    <span className="resumen-left">{item.titulo} (x{item.qty})</span>
+                    <span className="resumen-right">{formatPrice(subtotal)}</span>
                   </div>
                 );
               })}
             </div>
-            <div className="d-flex justify-content-between py-2 border-top">
-              <span>Total a pagar:</span>
-              <span><b>${cartTotal.toLocaleString('es-CL')}</b></span>
+            <div className="d-flex justify-content-between fw-bold mt-3 border-top pt-2 total-row">
+              <span>Total</span>
+              <span>{formatPrice(cartTotal)}</span>
             </div>
             <Button className="btn-primary w-100 mt-3" disabled={!cart.length}>Proceder al pago</Button>
           </Card>

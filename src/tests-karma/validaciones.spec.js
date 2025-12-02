@@ -1,12 +1,4 @@
-import {
-  isValidEmail,
-  normalizeRut,
-  isRutFormat,
-  computeRutDV,
-  isValidRut,
-  isValidPassword,
-  isValidAge,
-} from "../utils/Validaciones";
+import { isValidEmail, isValidRut, isValidPassword, isValidAge, isValidPrice } from '../utils/Utilidades';
 
 // Mini bateria para confirmar que las reglas de validacion siguen respondiendo igual que en los formularios.
 describe("Validaciones (Jasmine)", () => {

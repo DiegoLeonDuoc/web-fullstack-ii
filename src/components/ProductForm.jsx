@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Form, Button, Card } from 'react-bootstrap';
-import { isValidPrice } from '../utils/Validaciones';
+import { isValidPrice } from '../utils/Utilidades';
+import Storage from '../utils/UserStorage';
 
 /**
  * Formulario para crear/editar productos del catálogo.
@@ -16,6 +17,45 @@ export default function ProductForm({ onSubmit, selectedProduct, onCancel }) {
   });
   const [imgPreview, setImgPreview] = useState(null);
   const [priceError, setPriceError] = useState(false);
+  const [artistas, setArtistas] = useState([]);
+  const [sellos, setSellos] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch artists and labels from database
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const user = Storage.getCurrentUser();
+        const headers = {
+          'Authorization': user ? `Bearer ${user.token}` : ''
+        };
+
+        // Fetch artists
+        const artistasRes = await fetch('/api/v1/artistas', { headers });
+        if (artistasRes.ok) {
+          const artistasData = await artistasRes.json();
+          // Extract artistas from HATEOAS response
+          const artistasList = artistasData._embedded?.artistaList || [];
+          setArtistas(artistasList);
+        }
+
+        // Fetch labels
+        const sellosRes = await fetch('/api/v1/sellos', { headers });
+        if (sellosRes.ok) {
+          const sellosData = await sellosRes.json();
+          // Extract sellos from HATEOAS response
+          const sellosList = sellosData._embedded?.selloList || [];
+          setSellos(sellosList);
+        }
+      } catch (error) {
+        console.error('Error fetching artists/labels:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     if (selectedProduct) {
@@ -44,9 +84,19 @@ export default function ProductForm({ onSubmit, selectedProduct, onCancel }) {
       return;
     }
     onSubmit(formData);
-    setFormData({titulo:'',artista:'',formato:'',año:'',etiqueta:'',precio:'',descripcion:'',img:''});
+    setFormData({ titulo: '', artista: '', formato: '', año: '', etiqueta: '', precio: '', descripcion: '', img: '' });
     setImgPreview(null);
   };
+
+  if (loading) {
+    return (
+      <Card className="mb-3">
+        <Card.Body>
+          <Card.Title>Cargando...</Card.Title>
+        </Card.Body>
+      </Card>
+    );
+  }
 
   return (
     <Card className="mb-3">
@@ -59,7 +109,14 @@ export default function ProductForm({ onSubmit, selectedProduct, onCancel }) {
           </Form.Group>
           <Form.Group className="mb-2">
             <Form.Label>Artista</Form.Label>
-            <Form.Control name="artista" value={formData.artista} onChange={handleChange} required />
+            <Form.Select name="artista" value={formData.artista} onChange={handleChange} required>
+              <option value="">Seleccione un artista...</option>
+              {artistas.map((artista) => (
+                <option key={artista.id} value={artista.nombreArtista}>
+                  {artista.nombreArtista}
+                </option>
+              ))}
+            </Form.Select>
           </Form.Group>
           <Form.Group className="mb-2">
             <Form.Label>Formato</Form.Label>
@@ -75,7 +132,14 @@ export default function ProductForm({ onSubmit, selectedProduct, onCancel }) {
           </Form.Group>
           <Form.Group className="mb-2">
             <Form.Label>Etiqueta</Form.Label>
-            <Form.Control name="etiqueta" value={formData.etiqueta} onChange={handleChange} required />
+            <Form.Select name="etiqueta" value={formData.etiqueta} onChange={handleChange} required>
+              <option value="">Seleccione una etiqueta...</option>
+              {sellos.map((sello) => (
+                <option key={sello.id} value={sello.nombreSello}>
+                  {sello.nombreSello}
+                </option>
+              ))}
+            </Form.Select>
           </Form.Group>
           <Form.Group className="mb-2">
             <Form.Label>Precio</Form.Label>
@@ -90,8 +154,8 @@ export default function ProductForm({ onSubmit, selectedProduct, onCancel }) {
             <Form.Label>Fuente de Imagen (URL)</Form.Label>
             <Form.Control name="img" type="url" value={formData.img} onChange={handleChange} placeholder="https://..." />
             {imgPreview && imgPreview.match(/^https?:\/\//) && (
-              <div style={{marginTop:8}}>
-                <img src={imgPreview} alt="preview" style={{maxWidth:'100%',height:80,objectFit:'contain',borderRadius:4}} />
+              <div style={{ marginTop: 8 }}>
+                <img src={imgPreview} alt="preview" style={{ maxWidth: '100%', height: 80, objectFit: 'contain', borderRadius: 4 }} />
               </div>
             )}
           </Form.Group>

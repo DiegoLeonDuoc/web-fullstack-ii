@@ -94,3 +94,20 @@ export function isValidPrice(price) {
   let n = typeof price === 'string' ? parseInt(price, 10) : price;
   return n >= 1000;
 }
+
+/**
+ * Formatea un número a formato de moneda CLP (ej: $10.000)
+ * @param {number|string} price - Precio a formatear
+ * @returns {string} Precio formateado
+ */
+export function formatPrice(price) {
+  if (price === null || price === undefined) return '$0';
+  // Si ya tiene formato, intentar limpiar
+  let n = price;
+  if (typeof price === 'string') {
+    if (price.includes('$')) return price; // Asumir ya formateado
+    n = parseInt(price.replace(/[^\d]/g, ''), 10);
+  }
+  if (isNaN(n)) return '$0';
+  return '$' + n.toLocaleString('es-CL');
+}

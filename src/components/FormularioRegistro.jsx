@@ -9,7 +9,7 @@ import {
   isValidRut,
   isValidPassword,
   isValidAge,
-} from "../utils/Validaciones";
+} from "../utils/Utilidades";
 import Storage from '../utils/UserStorage'
 
 /**
@@ -80,7 +80,7 @@ function FormularioRegistro() {
   // const handleSubmit = (e) => {
   //   e.preventDefault();
 
-    // If the form is somehow submitted while invalid, focus first error
+  // If the form is somehow submitted while invalid, focus first error
   //   if (!isFormValid) {
   //     const firstInvalidKey = Object.keys(valid).find((k) => !valid[k]);
   //     const el = document.getElementById(firstInvalidKey);
@@ -93,32 +93,32 @@ function FormularioRegistro() {
   // };
   // Envío: si es válido, delega a Storage.saveUser que hashea la contraseña
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!isFormValid) {
-    const firstInvalidKey = Object.keys(valid).find((k) => !valid[k]);
-    const el = document.getElementById(firstInvalidKey);
-    if (el) el.focus();
-    return;
-  }
-
-  try {
-    // Guardar usuario en localStorage (hash de contraseña dentro)
-    const result = await Storage.saveUser(formData);
-    
-    if (result.success) {
-      console.log("Usuario registrado exitosamente:", result.user);
-      navigate("/login");
-    } else {
-      // Mostrar error al usuario
-      alert(result.error);
-      console.error("Error en registro:", result.error);
+    if (!isFormValid) {
+      const firstInvalidKey = Object.keys(valid).find((k) => !valid[k]);
+      const el = document.getElementById(firstInvalidKey);
+      if (el) el.focus();
+      return;
     }
-  } catch (error) {
-    console.error("Error al registrar usuario:", error);
-    alert("Error al registrar usuario. Intente nuevamente.");
-  }
-};
+
+    try {
+      // Guardar usuario en localStorage (hash de contraseña dentro)
+      const result = await Storage.saveUser(formData);
+
+      if (result.success) {
+        console.log("Usuario registrado exitosamente:", result.user);
+        navigate("/login");
+      } else {
+        // Mostrar error al usuario
+        alert(result.error);
+        console.error("Error en registro:", result.error);
+      }
+    } catch (error) {
+      console.error("Error al registrar usuario:", error);
+      alert("Error al registrar usuario. Intente nuevamente.");
+    }
+  };
 
   return (
     <Form id="registerForm" noValidate onSubmit={handleSubmit}>

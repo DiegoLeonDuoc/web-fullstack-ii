@@ -2,11 +2,12 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Image, Button, Form } from "react-bootstrap";
 import { useShoppingCart } from '../components/ShoppingCartContext';
+import { formatPrice } from '../utils/Utilidades';
 
 import dataReviews from "../data/DataReviews";
 import estrellas from "../components/Estrellas";
 import "../styles/producto.css";
-import { getProducts } from '../utils/MusicStorage';
+import { getProductById } from '../utils/MusicStorage';
 /**
  * Página de detalle de producto (por id en URL).
  * @returns {JSX.Element}
@@ -20,15 +21,18 @@ export default function ProductPage() {
   const { addItem } = useShoppingCart();
 
   useEffect(() => {
-    const found = getProducts().find((p) => p.id === id);
-    setProduct(found || null);
-    setReviews(dataReviews.filter((r) => r.productNom === id));
+    const load = async () => {
+      const found = await getProductById(id);
+      setProduct(found || null);
+      setReviews(dataReviews.filter((r) => r.productNom === id));
+    };
+    load();
   }, [id]);
 
   if (!product) return <div>Cargando...</div>;
 
-  const year = Number.isFinite(product.anio)
-    ? product.anio
+  const year = Number.isFinite(product.año)
+    ? product.año
     : (Object.values(product).find((v) => typeof v === 'string' && /^\d{4}$/.test(v)) || '');
 
   const handleAddToCart = (e) => {
@@ -48,7 +52,7 @@ export default function ProductPage() {
         </Col>
         <Col className="info-column">
           <div className="product-info">
-            <h2 className="product-title">{product.titulo}</h2>
+            <h2 className="text-primary fw-bold mb-3">{formatPrice(product.precio)}</h2>
             <div className="price-rating">
               <div>
                 <span className="price-label">Precio:</span>{" "}
