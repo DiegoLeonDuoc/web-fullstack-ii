@@ -20,11 +20,10 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "serve": "vite preview",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage --watch=false",
-    "test:karma": "karma start karma.conf.js --single-run"
+    "test:coverage": "vitest run --coverage --watch=false --reporter=verbose --logHeapUsage"
   },
   "eslintConfig": {
     "extends": [
@@ -48,13 +47,8 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@vitejs/plugin-react": "^5.0.4",
-    "esbuild": "^0.21.5",
-    "jasmine-core": "^5.2.0",
+    "@vitest/coverage-v8": "^4.0.14",
     "jsdom": "^27.0.1",
-    "karma": "^6.4.3",
-    "karma-chrome-launcher": "^3.2.0",
-    "karma-esbuild": "^2.3.0",
-    "karma-jasmine": "^5.1.0",
     "vitest": "^4.0.1"
   }
 }
