@@ -3,12 +3,12 @@
  * Mockeamos router, auth y storage porque en la vista real dependen de muchas piezas.
  */
 import React from "react";
-import { fireEvent, render, screen, cleanup } from "@testing-library/react";
+import { fireEvent, render, screen, cleanup, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { act } from "react";
 import Dashboard from "../pages/Dashboard";
 
 const navigateMock = vi.hoisted(() => vi.fn());
+const productState = vi.hoisted(() => ({ items: [] }));
 
 // Usamos un objeto mutable para imitar el estado del hook Auth en cada caso.
 const authState = vi.hoisted(() => ({
@@ -20,12 +20,23 @@ const authState = vi.hoisted(() => ({
 }));
 
 const musicStorageMock = vi.hoisted(() => ({
-  // El componente llama a todas, asi que es mas simple stubearlas aca.
   initStorage: vi.fn(),
-  getProducts: vi.fn(),
-  addProduct: vi.fn(),
-  updateProduct: vi.fn(),
-  deleteProduct: vi.fn(),
+  getProducts: vi.fn(async () => productState.items),
+  addProduct: vi.fn(async (prod) => {
+    const newProd = { id: prod.id || `${productState.items.length + 1}`, ...prod };
+    productState.items = [...productState.items, newProd];
+    return newProd;
+  }),
+  updateProduct: vi.fn(async (id, updated) => {
+    productState.items = productState.items.map((p) =>
+      p.id === id ? { ...p, ...updated } : p
+    );
+    return productState.items;
+  }),
+  deleteProduct: vi.fn(async (id) => {
+    productState.items = productState.items.filter((p) => p.id !== id);
+    return productState.items;
+  }),
 }));
 
 vi.mock('react-router-dom', async () => {
@@ -114,9 +125,25 @@ vi.mock("../components/ProductTable", () => ({
   ),
 }));
 
+vi.mock("../components/ArtistaForm", () => ({
+  default: () => <div data-testid="artista-form" />,
+}));
+
+vi.mock("../components/ArtistaTable", () => ({
+  default: () => <div data-testid="artista-table" />,
+}));
+
+vi.mock("../components/SelloForm", () => ({
+  default: () => <div data-testid="sello-form" />,
+}));
+
+vi.mock("../components/SelloTable", () => ({
+  default: () => <div data-testid="sello-table" />,
+}));
+
 vi.mock("react-bootstrap", () => ({
   // Componentes de layout reducidos a divs para trabajar sin dependencias extra.
-  Container: ({ children, ...props }) => (
+  Container: ({ children, fluid, ...props }) => (
     <div data-testid="rb-container" {...props}>
       {children}
     </div>
@@ -131,32 +158,59 @@ vi.mock("react-bootstrap", () => ({
       {children}
     </div>
   ),
+  Tabs: ({ children, activeKey, onSelect, ...props }) => (
+    <div data-testid="rb-tabs" {...props}>
+      {children}
+    </div>
+  ),
+  Tab: ({ children, eventKey, title }) => (
+    <div data-testid={`rb-tab-${eventKey || 'default'}`} data-title={title}>
+      {children}
+    </div>
+  ),
   Spinner: () => <div data-testid="spinner">cargando...</div>,
 }));
 
 describe("Dashboard", () => {
+  let confirmSpy;
+  let fetchSpy;
   beforeEach(() => {
-    vi.useFakeTimers();
     navigateMock.mockReset();
-    musicStorageMock.initStorage.mockReset();
+    productState.items = [];
+    musicStorageMock.initStorage.mockClear();
     musicStorageMock.getProducts.mockReset();
     musicStorageMock.addProduct.mockReset();
     musicStorageMock.updateProduct.mockReset();
     musicStorageMock.deleteProduct.mockReset();
+    musicStorageMock.getProducts.mockImplementation(async () => productState.items);
+    musicStorageMock.addProduct.mockImplementation(async (prod) => {
+      const newProd = { id: prod.id || `${productState.items.length + 1}`, ...prod };
+      productState.items = [...productState.items, newProd];
+      return newProd;
+    });
+    musicStorageMock.updateProduct.mockImplementation(async (id, updated) => {
+      productState.items = productState.items.map((p) =>
+        p.id === id ? { ...p, ...updated } : p
+      );
+      return productState.items;
+    });
+    musicStorageMock.deleteProduct.mockImplementation(async (id) => {
+      productState.items = productState.items.filter((p) => p.id !== id);
+      return productState.items;
+    });
+    confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ _embedded: { artistaList: [], selloList: [] } }),
+    });
     authState.isLoggedIn = true;
   });
 
   afterEach(() => {
     cleanup();
-    vi.useRealTimers();
+    confirmSpy.mockRestore();
+    fetchSpy.mockRestore();
   });
-
-  const flushTimers = async () => {
-    // El componente espera 50 ms para sincronizar Auth; aqui lo simulamos.
-    await act(async () => {
-      vi.runAllTimers();
-    });
-  };
 
   it("muestra un spinner mientras la autenticacion se esta verificando", () => {
     musicStorageMock.getProducts.mockReturnValue([]);
@@ -170,7 +224,7 @@ describe("Dashboard", () => {
     musicStorageMock.getProducts.mockReturnValue([]);
 
     render(<Dashboard />);
-    await flushTimers();
+    await waitFor(() => expect(navigateMock).toHaveBeenCalled());
 
     // Si el usuario no es admin, debe abortar sin tocar storage.
     expect(navigateMock).toHaveBeenCalledWith('/');
@@ -178,44 +232,33 @@ describe("Dashboard", () => {
   });
 
   it("inicializa storage y muestra productos cuando la sesion es valida", async () => {
-    const productos = [{ id: '1', titulo: 'Disco 1' }];
-    musicStorageMock.getProducts.mockReturnValue(productos);
+    productState.items = [{ id: '1', titulo: 'Disco 1' }];
 
     render(<Dashboard />);
-    await flushTimers();
-
-    // Validamos que el efecto secuencial se ejecute en el orden esperado.
-    expect(musicStorageMock.initStorage).toHaveBeenCalledTimes(1);
-    expect(musicStorageMock.getProducts).toHaveBeenCalledTimes(1);
-    expect(screen.getByText('Disco 1')).toBeInTheDocument();
+    await waitFor(() => expect(musicStorageMock.getProducts).toHaveBeenCalled());
+    await waitFor(() => expect(screen.getByText('Disco 1')).toBeInTheDocument());
   });
 
   it("agrega un producto nuevo mediante el formulario", async () => {
-    const productos = [{ id: '1', titulo: 'Disco 1' }];
-    musicStorageMock.getProducts.mockReturnValue(productos);
-    const nuevoProducto = { id: '2', titulo: 'Nuevo producto' };
-    musicStorageMock.addProduct.mockReturnValue(nuevoProducto);
+    productState.items = [{ id: '1', titulo: 'Disco 1' }];
 
     render(<Dashboard />);
-    await flushTimers();
-    expect(screen.getByText('Disco 1')).toBeInTheDocument();
+    await waitFor(() => expect(musicStorageMock.getProducts).toHaveBeenCalled());
+    await waitFor(() => expect(screen.getByText('Disco 1')).toBeInTheDocument());
 
-    // El boton del stub simula un submit exitoso del formulario completo.
     fireEvent.click(screen.getByTestId('submit-form'));
 
     expect(musicStorageMock.addProduct).toHaveBeenCalledWith(
       expect.objectContaining({ titulo: 'Nuevo producto' })
     );
-    expect(screen.getByText('Nuevo producto')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('Nuevo producto')).toBeInTheDocument());
   });
 
   it("actualiza un producto existente cuando se edita", async () => {
-    const productos = [{ id: '1', titulo: 'Disco 1' }];
-    musicStorageMock.getProducts.mockReturnValue(productos);
-    musicStorageMock.updateProduct.mockReturnValue([{ id: '1', titulo: 'Producto actualizado' }]);
+    productState.items = [{ id: '1', titulo: 'Disco 1' }];
 
     render(<Dashboard />);
-    await flushTimers();
+    await waitFor(() => expect(screen.getByText('Disco 1')).toBeInTheDocument());
 
     fireEvent.click(screen.getByTestId('edit-1'));
     expect(screen.getByTestId('editing-flag')).toHaveTextContent('Disco 1');
@@ -227,23 +270,19 @@ describe("Dashboard", () => {
       '1',
       expect.objectContaining({ titulo: 'Producto actualizado' })
     );
-    expect(screen.queryByTestId('editing-flag')).not.toBeInTheDocument();
-    await flushTimers();
+    await waitFor(() => expect(screen.queryByTestId('editing-flag')).not.toBeInTheDocument());
   });
 
   it("elimina un producto correctamente", async () => {
-    const productos = [{ id: '1', titulo: 'Disco 1' }];
-    musicStorageMock.getProducts.mockReturnValue(productos);
-    musicStorageMock.deleteProduct.mockReturnValue([]);
+    productState.items = [{ id: '1', titulo: 'Disco 1' }];
 
     render(<Dashboard />);
-    await flushTimers();
-    expect(screen.getByText('Disco 1')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('Disco 1')).toBeInTheDocument());
 
     fireEvent.click(screen.getByTestId('delete-1'));
 
     // Garantiza que se use el id correcto y se refleje la tabla sin elementos.
     expect(musicStorageMock.deleteProduct).toHaveBeenCalledWith('1');
-    expect(screen.queryByText('Disco 1')).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText('Disco 1')).not.toBeInTheDocument());
   });
 });
