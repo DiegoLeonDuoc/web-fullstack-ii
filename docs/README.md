@@ -33,4 +33,4 @@ Este documento resume la estrategia de pruebas después de migrar a Vite + Vites
 
 - Los tests mockean llamadas a red (`fetch`) y `UserStorage` donde aplica para aislar la lógica.
 - Algunos tests validan escenarios de error para asegurar retornos seguros (ej. `getProducts` ante API down devuelve `[]`, `updateProduct` lanza si no existe).  
-- El contexto de carrito verifica que no se permitan cantidades negativas (se limita a 1).*** End Patch***__["commentary to=functions.apply_patch code_block 'plaintext' domain_assistant 天空彩票 to=functions.apply_patch  Divider## Test Output reasoning**)] ***!
+- El contexto de carrito verifica que no se permitan cantidades negativas (se limita a 1).
