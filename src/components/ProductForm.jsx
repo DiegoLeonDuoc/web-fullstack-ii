@@ -21,7 +21,7 @@ export default function ProductForm({ onSubmit, selectedProduct, onCancel }) {
   const [sellos, setSellos] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch artists and labels from database
+  // Obtener artistas y sellos desde la base de datos
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -30,20 +30,20 @@ export default function ProductForm({ onSubmit, selectedProduct, onCancel }) {
           'Authorization': user ? `Bearer ${user.token}` : ''
         };
 
-        // Fetch artists
+        // Obtener artistas
         const artistasRes = await fetch('/api/v1/artistas', { headers });
         if (artistasRes.ok) {
           const artistasData = await artistasRes.json();
-          // Extract artistas from HATEOAS response
+          // Extraer artistas de la respuesta HATEOAS
           const artistasList = artistasData._embedded?.artistaList || [];
           setArtistas(artistasList);
         }
 
-        // Fetch labels
+        // Obtener sellos
         const sellosRes = await fetch('/api/v1/sellos', { headers });
         if (sellosRes.ok) {
           const sellosData = await sellosRes.json();
-          // Extract sellos from HATEOAS response
+          // Extraer sellos de la respuesta HATEOAS
           const sellosList = sellosData._embedded?.selloList || [];
           setSellos(sellosList);
         }

@@ -15,7 +15,7 @@ const getAuthHeaders = () => {
   return headers;
 };
 
-// Mapper: Backend -> Frontend
+// Mapeador: Backend -> Frontend
 const mapToFrontend = (backendProduct) => {
   return {
     id: backendProduct.sku,
@@ -33,20 +33,17 @@ const mapToFrontend = (backendProduct) => {
   };
 };
 
-// Mapper: Frontend -> Backend
-// Note: This is async because we might need to fetch Artist/Sello IDs
+// Mapeador: Frontend -> Backend
+// Nota: Es asíncrono porque necesitamos buscar IDs de Artista/Sello
 const mapToBackend = async (frontendProduct) => {
-  // We need to resolve Artist and Sello to objects with IDs
+  // Necesitamos resolver Artista y Sello a objetos con IDs
   let artista = await findArtistByName(frontendProduct.artista);
   if (!artista) {
-    // Try to create or fail? For now, fail if not found, or maybe we can't create without admin
-    // If we are admin (which we should be for addProduct), we could try to create.
-    // For simplicity, let's assume they exist or we fail.
-    // Or better, if we can't find it, we might send a dummy object but backend will likely reject.
+    // Si no existe, lanzamos error.
     throw new Error(`Artista '${frontendProduct.artista}' no encontrado. Debe crearlo primero.`);
   }
 
-  let sello = await findSelloByName(frontendProduct.etiqueta);
+  let sello = await getSelloByName(frontendProduct.etiqueta);
   if (!sello) {
     throw new Error(`Sello '${frontendProduct.etiqueta}' no encontrado. Debe crearlo primero.`);
   }
@@ -54,8 +51,8 @@ const mapToBackend = async (frontendProduct) => {
   return {
     sku: frontendProduct.id || generateId(frontendProduct.titulo, frontendProduct.formato),
     titulo: frontendProduct.titulo,
-    artista: { id: artista.id }, // Send ID
-    sello: { id: sello.id }, // Send ID
+    artista: { id: artista.id }, // Enviar ID
+    sello: { id: sello.id }, // Enviar ID
     nombreFormato: frontendProduct.formato,
     tipoFormato: inferTipoFormato(frontendProduct.formato),
     urlImagen: frontendProduct.img,
@@ -77,22 +74,30 @@ const inferTipoFormato = (formato) => {
   return 'DIGITAL';
 };
 
-// Helpers to find Artist/Sello
+// Ayudantes para buscar Artista/Sello
 const findArtistByName = async (name) => {
   try {
-    const res = await fetch(`${ARTIST_API_URL}/nombre/${encodeURIComponent(name)}`, {
-      headers: getAuthHeaders()
+    const res = await fetch(`${ARTIST_API_URL}/search?nombre=${encodeURIComponent(name)}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders()
+      },
     });
-    if (res.ok) return await res.json();
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    }
     return null;
-  } catch (e) {
+  } catch (error) {
+    console.error('Error fetching artist by name:', error);
     return null;
   }
 };
 
-const findSelloByName = async (name) => {
+export const getSelloByName = async (name) => {
   try {
-    const res = await fetch(`${SELLO_API_URL}/nombre/${encodeURIComponent(name)}`, {
+    const res = await fetch(`${SELLO_API_URL}/search?nombre=${encodeURIComponent(name)}`, {
       headers: getAuthHeaders()
     });
     if (res.ok) return await res.json();
@@ -103,10 +108,10 @@ const findSelloByName = async (name) => {
 };
 
 const CACHE_KEY = 'music_products_cache';
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
 
 export const initStorage = () => {
-  // No-op for API
+  // No-op para API
 };
 
 /**
@@ -115,17 +120,17 @@ export const initStorage = () => {
  */
 export const getProducts = async () => {
   try {
-    // 1. Check Cache
+    // 1. Revisar Caché
     const cached = localStorage.getItem(CACHE_KEY);
     if (cached) {
       const { timestamp, data } = JSON.parse(cached);
       if (Date.now() - timestamp < CACHE_DURATION) {
-        console.log('Serving from cache');
+        console.log('Sirviendo desde caché');
         return data;
       }
     }
 
-    // 2. Fetch from API
+    // 2. Obtener de API
     const res = await fetch(API_URL, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Error fetching products');
     const rawData = await res.json();
@@ -139,7 +144,7 @@ export const getProducts = async () => {
 
     const mappedData = list.map(mapToFrontend);
 
-    // 3. Save to Cache
+    // 3. Guardar en Caché
     localStorage.setItem(CACHE_KEY, JSON.stringify({
       timestamp: Date.now(),
       data: mappedData
@@ -158,7 +163,7 @@ export const getProducts = async () => {
  * @returns {Promise<Object|null>} Producto encontrado o null.
  */
 export const getProductById = async (id) => {
-  // Try to find in cache first to avoid call if possible
+  // Intentar buscar en caché primero para evitar llamada si es posible
   const cached = localStorage.getItem(CACHE_KEY);
   if (cached) {
     const { timestamp, data } = JSON.parse(cached);
@@ -197,7 +202,7 @@ export const addProduct = async (product) => {
   }
   const created = await res.json();
 
-  // Invalidate Cache
+  // Invalidar Caché
   localStorage.removeItem(CACHE_KEY);
 
   return mapToFrontend(created);
@@ -210,7 +215,7 @@ export const addProduct = async (product) => {
  * @returns {Promise<Object>} Producto actualizado.
  */
 export const updateProduct = async (id, updated) => {
-  // Fetch current
+  // Obtener actual
   const currentRes = await fetch(`${API_URL}/${id}`, { headers: getAuthHeaders() });
   if (!currentRes.ok) throw new Error('Product not found');
   const currentBackend = await currentRes.json();
@@ -227,7 +232,7 @@ export const updateProduct = async (id, updated) => {
   if (!res.ok) throw new Error('Error updating product');
   const result = await res.json();
 
-  // Invalidate Cache
+  // Invalidar Caché
   localStorage.removeItem(CACHE_KEY);
 
   return mapToFrontend(result);
@@ -245,7 +250,7 @@ export const deleteProduct = async (id) => {
   });
   if (!res.ok) throw new Error('Error deleting product');
 
-  // Invalidate Cache
+  // Invalidar Caché
   localStorage.removeItem(CACHE_KEY);
 };
 
@@ -253,13 +258,13 @@ export function generateId(titulo, formato) {
   const clean = (str) =>
     str
       .toLowerCase()
-      .normalize("NFD") // remove accents
-      .replace(/[\u0300-\u036f]/g, "") // remove diacritics
-      .replace(/[^a-z0-9]+/g, "-") // replace non-alphanum with dash
-      .replace(/^-+|-+$/g, ""); // trim leading/trailing dash
+      .normalize("NFD") // remover acentos
+      .replace(/[\u0300-\u036f]/g, "") // remover diacríticos
+      .replace(/[^a-z0-9]+/g, "-") // reemplazar no-alfanuméricos con guión
+      .replace(/^-+|-+$/g, ""); // recortar guiones iniciales/finales
 
   return `${clean(titulo)}-${clean(formato)}`;
 }
 
-// Deprecated synchronous methods - kept for safety but should not be used
+// Métodos síncronos obsoletos - mantenidos por seguridad pero no deben usarse
 export const saveProducts = () => { console.warn('saveProducts is deprecated'); };

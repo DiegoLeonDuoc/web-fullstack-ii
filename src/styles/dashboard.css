@@ -130,3 +130,6 @@ form select {
   color: #fff !important;
   border-color: #333 !important;
 }
+.dashboard-loading-container {
+  min-height: 50vh;
+}

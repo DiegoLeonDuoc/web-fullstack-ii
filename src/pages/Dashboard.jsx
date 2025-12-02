@@ -24,11 +24,11 @@ export default function Dashboard() {
   const [authChecked, setAuthChecked] = useState(false);
   const [activeTab, setActiveTab] = useState('productos');
 
-  // Artist state
+  // Estado de Artistas
   const [artistas, setArtistas] = useState([]);
   const [selectedArtista, setSelectedArtista] = useState(null);
 
-  // Sello state
+  // Estado de Sellos
   const [sellos, setSellos] = useState([]);
   const [selectedSello, setSelectedSello] = useState(null);
 
@@ -53,7 +53,7 @@ export default function Dashboard() {
     load();
   }, [authChecked, isLoggedIn, navigate]);
 
-  // Artistas CRUD
+  // CRUD de Artistas
   const loadArtistas = async () => {
     try {
       const user = Storage.getCurrentUser();
@@ -93,7 +93,7 @@ export default function Dashboard() {
     await loadArtistas();
   };
 
-  // Sellos CRUD
+  // CRUD de Sellos
   const loadSellos = async () => {
     try {
       const user = Storage.getCurrentUser();
@@ -133,7 +133,7 @@ export default function Dashboard() {
     await loadSellos();
   };
 
-  // Products CRUD
+  // CRUD de Productos
   const handleAddOrUpdate = async (prod) => {
     try {
       if (selected) {
@@ -173,7 +173,7 @@ export default function Dashboard() {
 
   if (!authChecked || !isLoggedIn) {
     return (
-      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '50vh' }}>
+      <Container className="d-flex justify-content-center align-items-center dashboard-loading-container">
         <Spinner animation="border" />
       </Container>
     );

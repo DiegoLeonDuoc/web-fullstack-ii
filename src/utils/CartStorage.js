@@ -1,4 +1,4 @@
-// CartStorage.js — Backend-only implementation (for testing)
+// CartStorage.js — Implementación solo Backend
 import Storage from './UserStorage';
 
 const API_URL = '/api/v1/carritos';
@@ -16,7 +16,7 @@ const getHeaders = () => {
 const mapBackendCart = async (backendCart) => {
   if (!backendCart || !backendCart.itemsCarrito) return [];
 
-  // Fetch product details for each item
+  // Obtener detalles del producto para cada ítem
   const itemsWithDetails = await Promise.all(
     backendCart.itemsCarrito.map(async (item) => {
       try {
@@ -36,7 +36,7 @@ const mapBackendCart = async (backendCart) => {
       } catch (e) {
         console.error(`Error fetching product ${item.sku}:`, e);
       }
-      // Fallback if product fetch fails
+      // Fallback si falla la obtención del producto
       return {
         id: item.sku,
         qty: item.cantidad,
@@ -78,12 +78,12 @@ export async function addToCart(product, qty = 1) {
   const user = Storage.getCurrentUser();
 
   if (!user || !user.token || !user.rut) {
-    console.error('User not logged in, cannot add to cart');
+    console.error('Usuario no logueado, no se puede agregar al carrito');
     return [];
   }
 
   try {
-    console.log(`Adding product ${product.id} to cart for user ${user.rut}`);
+    console.log(`Agregando producto ${product.id} al carrito para usuario ${user.rut}`);
     const res = await fetch(`${API_URL}/${user.rut}/items`, {
       method: 'POST',
       headers: getHeaders(),
@@ -96,10 +96,10 @@ export async function addToCart(product, qty = 1) {
       console.log('Cart after add:', cart);
       return await mapBackendCart(cart);
     } else {
-      console.error('Failed to add to cart:', res.status);
+      console.error('Fallo al agregar al carrito:', res.status);
     }
   } catch (e) {
-    console.error('Error adding to backend cart:', e);
+    console.error('Error agregando al carrito backend:', e);
   }
 
   return [];
@@ -111,7 +111,7 @@ export async function updateItemQty(productId, qty) {
   const newQty = Math.max(1, Number(qty));
 
   if (!user || !user.token || !user.rut) {
-    console.error('User not logged in, cannot update cart');
+    console.error('Usuario no logueado, no se puede actualizar carrito');
     return [];
   }
 
@@ -135,7 +135,7 @@ export async function updateItemQty(productId, qty) {
       }
     }
   } catch (e) {
-    console.error('Error updating backend cart:', e);
+    console.error('Error actualizando carrito backend:', e);
   }
 
   return [];
@@ -146,7 +146,7 @@ export async function removeItem(productId) {
   const user = Storage.getCurrentUser();
 
   if (!user || !user.token || !user.rut) {
-    console.error('User not logged in, cannot remove from cart');
+    console.error('Usuario no logueado, no se puede eliminar del carrito');
     return [];
   }
 
@@ -169,7 +169,7 @@ export async function removeItem(productId) {
       }
     }
   } catch (e) {
-    console.error('Error removing from backend cart:', e);
+    console.error('Error eliminando del carrito backend:', e);
   }
 
   return [];

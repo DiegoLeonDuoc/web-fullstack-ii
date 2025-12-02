@@ -17,8 +17,8 @@ function Header() {
 
   const displayName = currentUser
     ? ([currentUser.firstName, currentUser.lastName].filter(Boolean).join(' ').trim()
-        || currentUser.email
-        || 'Usuario')
+      || currentUser.email
+      || 'Usuario')
     : '';
 
   const avatarInitials = (() => {
@@ -78,7 +78,7 @@ function Header() {
       </div>
 
       <div className="header-right">
-        <div className="me-3" style={{ position: 'relative' }}>
+        <div className="me-3 header-dropdown-container">
           <button
             type="button"
             aria-label="Abrir menú"
@@ -88,7 +88,7 @@ function Header() {
             <span className="fa fa-bars" />
           </button>
           {showMenu && (
-            <div className="dropdown-menu show" style={{ display: 'block', position: 'absolute' }}>
+            <div className="dropdown-menu show header-dropdown-menu">
               <button className="dropdown-item" onClick={() => goCategoria('CD')}>CD</button>
               <button className="dropdown-item" onClick={() => goCategoria('Vinilo')}>Vinilo</button>
             </div>
@@ -101,7 +101,7 @@ function Header() {
         <ShoppingCartIcon />
         <div className="user-account">
           {isLoggedIn ? (
-            <div className="user-menu" style={{ position: 'relative' }}>
+            <div className="user-menu header-dropdown-container">
               <button
                 type="button"
                 className="user-avatar btn btn-outline-light"
@@ -115,10 +115,7 @@ function Header() {
                 )}
               </button>
               {showUserMenu && (
-                <div
-                  className="dropdown-menu show"
-                  style={{ display: 'block', right: 0, left: 'auto', position: 'absolute', minWidth: '240px' }}
-                >
+                <div className="dropdown-menu show user-menu-dropdown">
                   <div className="px-3 py-2 border-bottom">
                     <div className="small text-muted">Conectado como</div>
                     <strong>{displayName}</strong>
@@ -126,7 +123,9 @@ function Header() {
                       <div className="small text-muted mt-1">{currentUser.email}</div>
                     )}
                     {currentUser?.roles?.includes('ROLE_ADMIN') && (
-                      <span className="badge bg-primary mt-2">Administrador</span>
+                      <span className="badge bg-primary mt-2">
+                        <i className="fa fa-shield me-1"></i> Administrador
+                      </span>
                     )}
                   </div>
                   <button

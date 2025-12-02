@@ -53,18 +53,6 @@ export default function ProductPage() {
         <Col className="info-column">
           <div className="product-info">
             <h2 className="text-primary fw-bold mb-3">{formatPrice(product.precio)}</h2>
-            <div className="price-rating">
-              <div>
-                <span className="price-label">Precio:</span>{" "}
-                <span className="price-value">{product.precio}</span>
-              </div>
-              <div className="rating">
-                <div className="stars">{estrellas(product.rating)}</div>
-                <div className="rating-count">
-                  {product.rating} ({product.ratingCount} reseñas)
-                </div>
-              </div>
-            </div>
             <p className="product-format">
               <strong>Formato:</strong> {product.formato}
             </p>

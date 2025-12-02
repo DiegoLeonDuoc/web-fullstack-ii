@@ -135,3 +135,20 @@
         margin-top: 8px;
     }
 }
+
+.header-dropdown-container {
+  position: relative;
+}
+
+.header-dropdown-menu {
+  display: block;
+  position: absolute;
+}
+
+.user-menu-dropdown {
+  display: block;
+  right: 0;
+  left: auto;
+  position: absolute;
+  min-width: 240px;
+}
