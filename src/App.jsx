@@ -13,7 +13,6 @@ import Login from './pages/Login';
 import Catalogo from './pages/Catalogo';
 import Dashboard from './pages/Dashboard';
 import Carrito from './pages/Carrito.jsx';
-import Pacientes from './pages/TEST.jsx';
 
 function App() {
   return (
@@ -35,7 +34,6 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="/carrito" element={<Carrito />} />
-          <Route path="/test" element={<Pacientes />} />
         </Routes>
       </main>
       <Footer />
