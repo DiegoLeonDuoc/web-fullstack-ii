@@ -30,7 +30,8 @@ const mapBackendCart = async (backendCart) => {
             precio: product.precio,
             img: product.urlImagen,
             formato: product.nombreFormato,
-            artista: product.artista ? product.artista.nombreArtista : 'Desconocido'
+            artista: product.artista ? product.artista.nombreArtista : 'Desconocido',
+            stock: product.cantidadStock || 0 // Agregar stock disponible
           };
         }
       } catch (e) {
@@ -44,7 +45,8 @@ const mapBackendCart = async (backendCart) => {
         precio: 0,
         img: '',
         formato: '',
-        artista: ''
+        artista: '',
+        stock: 0
       };
     })
   );

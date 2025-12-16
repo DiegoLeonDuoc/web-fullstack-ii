@@ -1,16 +1,58 @@
 .fila-productos {
+  /* overflow-x: auto - Permite desplazamiento horizontal cuando el contenido excede el ancho */
   overflow-x: auto;
+  /* white-space: nowrap - Evita que el contenido se envuelva a la siguiente línea */
   white-space: nowrap;
-  scrollbar-width: thin; 
+  /* scrollbar-width: thin - Hace la barra de desplazamiento más delgada (Firefox) */
+  scrollbar-width: thin;
   padding: 0.5rem;
+}
+
+#fila {
+  /* flex-wrap: nowrap - Mantiene todos los elementos en una sola línea horizontal */
+  flex-wrap: nowrap;
+  display: flex;
+  /* gap: 1rem - Espacio uniforme entre las tarjetas de productos */
+  gap: 1rem;
 }
 
 #col-prod {
   display: flex;
-  width: 100%;
+  /* flex: 0 0 auto - No crece, no se encoge, tamaño automático basado en contenido */
+  flex: 0 0 auto;
+  /* position: relative - Permite posicionamiento absoluto de elementos hijos */
+  position: relative;
 }
 
-#fila {
-  flex-wrap: nowrap;
-  height: 100%;
+/* Mobile: smaller cards */
+/* Móvil: tarjetas más pequeñas */
+@media (max-width: 575px) {
+  #col-prod {
+    /* width: 150px - Ancho fijo de tarjeta optimizado para pantallas móviles */
+    width: 150px;
+    /* min-height: 240px - Altura mínima para mantener proporciones adecuadas */
+    min-height: 240px;
+  }
+}
+
+/* Tablets: medium cards */
+/* Tablets: tarjetas medianas */
+@media (min-width: 576px) and (max-width: 991px) {
+  #col-prod {
+    /* width: 180px - Ancho intermedio para tablets */
+    width: 180px;
+    /* min-height: 280px - Altura ajustada para tablets */
+    min-height: 280px;
+  }
+}
+
+/* Desktop: larger cards */
+/* Desktop: tarjetas más grandes */
+@media (min-width: 992px) {
+  #col-prod {
+    /* width: 220px - Ancho completo para pantallas grandes */
+    width: 220px;
+    /* min-height: 320px - Altura completa para mejor visualización */
+    min-height: 320px;
+  }
 }

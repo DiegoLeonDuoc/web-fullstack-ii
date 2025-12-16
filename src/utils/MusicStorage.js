@@ -144,6 +144,13 @@ export const getProducts = async () => {
 
     const mappedData = list.map(mapToFrontend);
 
+    // Ordenar por SKU para mantener orden consistente
+    mappedData.sort((a, b) => {
+      if (a.id < b.id) return -1;
+      if (a.id > b.id) return 1;
+      return 0;
+    });
+
     // 3. Guardar en Caché
     localStorage.setItem(CACHE_KEY, JSON.stringify({
       timestamp: Date.now(),

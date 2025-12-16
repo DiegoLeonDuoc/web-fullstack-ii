@@ -13,7 +13,7 @@ import Storage from '../utils/UserStorage';
  */
 export default function ProductForm({ onSubmit, selectedProduct, onCancel }) {
   const [formData, setFormData] = useState({
-    titulo: '', artista: '', formato: '', año: '', etiqueta: '', precio: '', descripcion: '', img: '',
+    titulo: '', artista: '', formato: '', año: '', etiqueta: '', precio: '', descripcion: '', img: '', stock: 0,
   });
   const [imgPreview, setImgPreview] = useState(null);
   const [priceError, setPriceError] = useState(false);
@@ -77,15 +77,21 @@ export default function ProductForm({ onSubmit, selectedProduct, onCancel }) {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isValidPrice(formData.precio)) {
       setPriceError(true);
       return;
     }
-    onSubmit(formData);
-    setFormData({ titulo: '', artista: '', formato: '', año: '', etiqueta: '', precio: '', descripcion: '', img: '' });
-    setImgPreview(null);
+
+    // onSubmit devuelve true si fue exitoso, false si falló
+    const success = await onSubmit(formData);
+
+    // Solo limpiar el formulario si fue exitoso
+    if (success) {
+      setFormData({ titulo: '', artista: '', formato: '', año: '', etiqueta: '', precio: '', descripcion: '', img: '', stock: 0 });
+      setImgPreview(null);
+    }
   };
 
   if (loading) {
@@ -146,13 +152,32 @@ export default function ProductForm({ onSubmit, selectedProduct, onCancel }) {
             <Form.Control name="precio" type="number" value={formData.precio} onChange={handleChange} required min={1000} />
             {priceError && <Form.Text className="text-danger">El precio debe ser mayor o igual a $1.000</Form.Text>}
           </Form.Group>
+          <Form.Group className="mb-2">
+            <Form.Label>Stock</Form.Label>
+            <Form.Control
+              name="stock"
+              type="number"
+              value={formData.stock}
+              onChange={handleChange}
+              required
+              min={0}
+              placeholder="Cantidad disponible"
+            />
+          </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Descripción</Form.Label>
             <Form.Control as="textarea" name="descripcion" rows={2} value={formData.descripcion} onChange={handleChange} required />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Fuente de Imagen (URL)</Form.Label>
-            <Form.Control name="img" type="url" value={formData.img} onChange={handleChange} placeholder="https://..." />
+            <Form.Control
+              name="img"
+              type="url"
+              value={formData.img}
+              onChange={handleChange}
+              placeholder="https://..."
+              required
+            />
             {imgPreview && imgPreview.match(/^https?:\/\//) && (
               <div style={{ marginTop: 8 }}>
                 <img src={imgPreview} alt="preview" style={{ maxWidth: '100%', height: 80, objectFit: 'contain', borderRadius: 4 }} />

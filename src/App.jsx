@@ -11,6 +11,7 @@ import Contacto from './pages/Contacto';
 import Registro from './pages/Registro';
 import Login from './pages/Login';
 import Catalogo from './pages/Catalogo';
+import Admin from './pages/Admin';
 import Dashboard from './pages/Dashboard';
 import Carrito from './pages/Carrito.jsx';
 
@@ -28,6 +29,11 @@ function App() {
           <Route path="/contacto" element={<Contacto />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/admin" element={
+            <ProtectedRoute>
+              <Admin />
+            </ProtectedRoute>
+          } />
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <Dashboard />

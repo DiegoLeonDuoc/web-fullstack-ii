@@ -7,7 +7,7 @@ export const Auth = () => {
 
   useEffect(() => {
     checkAuthStatus();
-    
+
     // Escuchar cambios en localStorage
     const handleStorageChange = () => {
       checkAuthStatus();
@@ -19,7 +19,7 @@ export const Auth = () => {
 
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('authStateChanged', handleAuthEvent);
-    
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('authStateChanged', handleAuthEvent);

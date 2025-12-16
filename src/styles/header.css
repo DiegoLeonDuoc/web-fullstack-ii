@@ -106,49 +106,166 @@
     min-width: 0;
 }
 
-@media (max-width: 800px) {
+/* Dispositivos móviles (< 576px) */
+@media (max-width: 575px) {
     .header-component {
+        /* flex-direction: column - Cambia el layout de horizontal a vertical para apilar elementos */
         flex-direction: column;
+        /* align-items: stretch - Hace que los elementos ocupen todo el ancho disponible */
         align-items: stretch;
+        /* padding: 12px - Reduce el espaciado interno para aprovechar mejor el espacio en pantallas pequeñas */
+        padding: 12px;
+        /* gap: 12px - Reduce el espacio entre elementos flexbox */
+        gap: 12px;
+    }
+
+    .header-component .logo img {
+        /* height: 35px - Reduce el tamaño del logo para pantallas móviles */
+        height: 35px;
     }
 
     .header-component .header-left,
     .header-component .header-right {
+        /* width: 100% - Hace que cada sección ocupe todo el ancho disponible */
         width: 100%;
+        /* justify-content: space-between - Distribuye el espacio entre elementos */
         justify-content: space-between;
-        gap: 12px;
+        /* gap: 8px - Espacio reducido entre elementos internos */
+        gap: 8px;
+    }
+
+    .header-component nav ul {
+        /* flex-wrap: wrap - Permite que los elementos de navegación se envuelvan en múltiples líneas */
+        flex-wrap: wrap;
+        /* gap: 8px - Espacio uniforme entre elementos de navegación */
+        gap: 8px;
+    }
+
+    .header-component nav ul li {
+        /* margin-right: 12px - Espacio a la derecha de cada elemento de navegación */
+        margin-right: 12px;
+        /* font-size: 0.9rem - Reduce el tamaño de fuente para mejor legibilidad en móvil */
+        font-size: 0.9rem;
     }
 
     .header-component .search-bar {
+        /* flex-basis: 100% - Establece el tamaño base del elemento al 100% */
         flex-basis: 100%;
+        /* width: 100% - Asegura que la barra de búsqueda ocupe todo el ancho */
         width: 100%;
+        /* max-width: none - Elimina el límite de ancho máximo */
         max-width: none;
+        /* margin-top: 8px - Añade espacio superior para separación visual */
+        margin-top: 8px;
+        /* min-width: 0 - Permite que el elemento se encoja si es necesario */
+        min-width: 0;
+    }
+
+    .header-component .search-bar input {
+        /* width: 100% - El input ocupa todo el ancho de su contenedor */
+        width: 100%;
+        /* padding: 8px - Reduce el padding interno para pantallas pequeñas */
+        padding: 8px;
+        /* font-size: 0.9rem - Tamaño de fuente reducido pero legible */
+        font-size: 0.9rem;
+    }
+
+    .header-component .search-bar button {
+        /* padding: 8px 12px - Reduce el padding del botón para mejor ajuste */
+        padding: 8px 12px;
+        /* font-size: 0.9rem - Tamaño de fuente consistente con otros elementos */
+        font-size: 0.9rem;
+    }
+
+    .header-component .cart,
+    .header-component .user-account {
+        /* margin-top: 8px - Añade espacio superior para separación */
+        margin-top: 8px;
+        /* font-size: 0.9rem - Tamaño de fuente reducido */
+        font-size: 0.9rem;
+    }
+
+    .user-menu-dropdown {
+        /* min-width: 200px - Ancho mínimo reducido para el menú desplegable en móvil */
+        min-width: 200px;
+    }
+}
+
+/* Dispositivos tablet (576px - 800px) */
+@media (min-width: 576px) and (max-width: 800px) {
+    .header-component {
+        /* flex-direction: column - Layout vertical para tablets en orientación portrait */
+        flex-direction: column;
+        /* align-items: stretch - Elementos ocupan todo el ancho */
+        align-items: stretch;
+        /* padding: 16px - Padding intermedio para tablets */
+        padding: 16px;
+    }
+
+    .header-component .logo img {
+        /* height: 40px - Tamaño de logo intermedio para tablets */
+        height: 40px;
+    }
+
+    .header-component .header-left,
+    .header-component .header-right {
+        /* width: 100% - Secciones ocupan todo el ancho */
+        width: 100%;
+        /* justify-content: space-between - Distribuye elementos uniformemente */
+        justify-content: space-between;
+        /* gap: 12px - Espacio moderado entre elementos */
+        gap: 12px;
+    }
+
+    .header-component nav ul li {
+        /* margin-right: 16px - Mayor espacio entre elementos de navegación */
+        margin-right: 16px;
+    }
+
+    .header-component .search-bar {
+        /* flex-basis: 100% - Barra de búsqueda ocupa todo el ancho base */
+        flex-basis: 100%;
+        /* width: 100% - Ancho completo */
+        width: 100%;
+        /* max-width: none - Sin límite de ancho máximo */
+        max-width: none;
+        /* margin-top: 8px - Separación superior */
         margin-top: 8px;
     }
 
     .header-component .search-bar input {
+        /* width: 100% - Input ocupa todo el ancho disponible */
         width: 100%;
     }
 
     .header-component .cart,
     .header-component .user-account {
+        /* margin-top: 8px - Separación superior para mejor organización */
         margin-top: 8px;
     }
 }
 
+/* Dispositivos desktop (> 800px) */
+@media (min-width: 801px) {
+    .header-component .logo img {
+        /* height: 50px - Tamaño completo del logo para pantallas grandes */
+        height: 50px;
+    }
+}
+
 .header-dropdown-container {
-  position: relative;
+    position: relative;
 }
 
 .header-dropdown-menu {
-  display: block;
-  position: absolute;
+    display: block;
+    position: absolute;
 }
 
 .user-menu-dropdown {
-  display: block;
-  right: 0;
-  left: auto;
-  position: absolute;
-  min-width: 240px;
+    display: block;
+    right: 0;
+    left: auto;
+    position: absolute;
+    min-width: 240px;
 }

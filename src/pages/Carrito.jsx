@@ -1,10 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap';
 import { useShoppingCart } from '../components/ShoppingCartContext';
 import { formatPrice } from '../utils/Utilidades';
 import '../styles/carrito.css';
 
 function CartItem({ item, onUpdateQty, onRemove }) {
+  const maxQty = item.stock || 999;
+  const isLowStock = item.stock && item.stock <= 5;
+  const isAtMaxStock = item.qty >= maxQty;
+  console.log(item)
+
+  const handleQtyChange = (e) => {
+    let newQty = Number(e.target.value);
+    // Validar contra stock disponible
+    if (newQty > maxQty) {
+      newQty = maxQty;
+    }
+    if (newQty < 1) {
+      newQty = 1;
+    }
+    onUpdateQty(item.id, newQty);
+  };
+
   return (
     <Card className="cart-item flex-row align-items-center mb-3 p-2">
       <div className="cart-item-thumb-wrapper">
@@ -14,11 +31,30 @@ function CartItem({ item, onUpdateQty, onRemove }) {
         <div className="product-title">{item.titulo}</div>
         <div><span>{item.formato}</span> — <span>{item.artista}</span></div>
         <span>{formatPrice(item.precio)}</span>
+        {item.stock !== undefined && (
+          <div className="mt-1">
+            <small className={isLowStock ? 'text-warning' : 'text-muted'}>
+              {item.stock > 0 ? `${item.stock} disponibles` : 'Sin stock'}
+            </small>
+          </div>
+        )}
+        {isAtMaxStock && item.stock > 0 && (
+          <div className="mt-1">
+            <small className="text-info">
+              <i className="fa fa-info-circle me-1"></i>
+              Cantidad máxima alcanzada
+            </small>
+          </div>
+        )}
       </div>
       <Form.Control
         className="qty-input mx-2"
-        type="number" min={1} value={item.qty}
-        onChange={e => onUpdateQty(item.id, Number(e.target.value))}
+        type="number"
+        min={1}
+        max={maxQty}
+        value={item.qty}
+        onChange={handleQtyChange}
+        disabled={item.stock === 0}
       />
       <Button variant="outline-danger remove-item ms-2" onClick={() => onRemove(item.id)}>
         <i className="fa fa-trash" />
@@ -28,7 +64,12 @@ function CartItem({ item, onUpdateQty, onRemove }) {
 }
 
 export default function Carrito() {
-  const { cart, cartTotal, updateQty, removeItem } = useShoppingCart();
+  const { cart, cartTotal, updateQty, removeItem, refreshCart } = useShoppingCart();
+
+  // Refrescar carrito al cargar la página para obtener nombres actualizados de artistas/etiquetas
+  useEffect(() => {
+    refreshCart();
+  }, [refreshCart]);
 
   return (
     <Container className="my-4">

@@ -1,42 +1,126 @@
-.card{
+.card {
+  /* position: absolute - Posiciona la tarjeta de forma absoluta dentro de su contenedor */
   position: absolute;
+  /* width: 100% - Ocupa todo el ancho del contenedor padre */
   width: 100%;
+  /* height: 100% - Ocupa toda la altura del contenedor padre */
+  height: 100%;
+  /* overflow: hidden - Oculta contenido que exceda los límites de la tarjeta */
   overflow: hidden;
+  /* border: none - Sin borde */
   border: none;
+  /* display: flex - Activa flexbox para organizar imagen y contenido */
+  display: flex;
+  /* flex-direction: column - Apila imagen y contenido verticalmente */
+  flex-direction: column;
 }
 
 .card-body {
   text-align: left;
-  height: 100%;
-  width: 100%;
   background-color: black;
+  /* padding: 0.5rem - Espaciado interno base para móvil */
+  padding: 0.5rem;
+  /* flex: 0 0 auto - No crece, no se encoge, mantiene su tamaño natural */
+  flex: 0 0 auto;
 }
 
 #imagen-carta {
-  height: 100%;
+  /* width: 100% - Imagen ocupa todo el ancho disponible */
   width: 100%;
+  /* height: auto - Altura se ajusta automáticamente */
+  height: auto;
+  /* aspect-ratio: 1 / 1 - Mantiene proporción cuadrada (1:1) */
+  aspect-ratio: 1 / 1;
+  /* object-fit: cover - Recorta la imagen para llenar el espacio sin distorsión */
+  object-fit: cover;
   background-color: black;
+  /* flex: 1 1 auto - Crece para ocupar espacio disponible, se encoge si es necesario */
+  flex: 1 1 auto;
 }
 
 #formato {
-  font-size:0.9rem;
+  /* font-size: 0.75rem - Tamaño de fuente pequeño para el formato (móvil) */
+  font-size: 0.75rem;
   color: white;
+  /* display: block - Elemento de bloque para ocupar línea completa */
+  display: block;
 }
 
 #art-titulo {
-  margin: 0;
+  margin: 0.25rem 0;
+  /* overflow: hidden - Oculta texto que exceda el contenedor */
   overflow: hidden;
+  /* display: -webkit-box - Activa modelo de caja flexible de WebKit */
   display: -webkit-box;
-  text-wrap: wrap;
-  width: 200px;
+  /* -webkit-line-clamp: 2 - Limita el texto a 2 líneas (WebKit) */
+  -webkit-line-clamp: 2;
+  /* line-clamp: 2 - Limita el texto a 2 líneas (estándar) */
+  line-clamp: 2;
+  /* -webkit-box-orient: vertical - Orientación vertical para line-clamp */
+  -webkit-box-orient: vertical;
+  /* text-overflow: ellipsis - Añade puntos suspensivos (...) al texto truncado */
+  text-overflow: ellipsis;
+  /* font-size: 0.85rem - Tamaño de fuente para el título (móvil) */
+  font-size: 0.85rem;
   color: white;
+  /* line-height: 1.2 - Altura de línea compacta */
+  line-height: 1.2;
 }
 
 #precio {
-  font-size: 1.2rem;
+  /* font-size: 1rem - Tamaño de fuente base para el precio (móvil) */
+  font-size: 1rem;
   text-align: left;
-  text-wrap: wrap;
-  display: flex;
-  vertical-align: bottom;
+  /* display: block - Elemento de bloque */
+  display: block;
   color: white;
+  /* font-weight: 600 - Texto semi-negrita para destacar el precio */
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+/* Tablets: texto ligeramente más grande */
+@media (min-width: 768px) {
+  #formato {
+    /* font-size: 0.8rem - Incremento de tamaño para tablets */
+    font-size: 0.8rem;
+  }
+
+  #art-titulo {
+    /* font-size: 0.9rem - Título más grande en tablets */
+    font-size: 0.9rem;
+  }
+
+  #precio {
+    /* font-size: 1.1rem - Precio más visible en tablets */
+    font-size: 1.1rem;
+  }
+
+  .card-body {
+    /* padding: 0.75rem - Mayor espaciado interno para tablets */
+    padding: 0.75rem;
+  }
+}
+
+/* Desktop: texto a tamaño completo */
+@media (min-width: 992px) {
+  #formato {
+    /* font-size: 0.9rem - Tamaño completo para formato en desktop */
+    font-size: 0.9rem;
+  }
+
+  #art-titulo {
+    /* font-size: 1rem - Tamaño completo para título en desktop */
+    font-size: 1rem;
+  }
+
+  #precio {
+    /* font-size: 1.2rem - Precio destacado en desktop */
+    font-size: 1.2rem;
+  }
+
+  .card-body {
+    /* padding: 1rem - Espaciado completo para desktop */
+    padding: 1rem;
+  }
 }

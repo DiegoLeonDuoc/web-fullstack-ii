@@ -1,251 +1,195 @@
 import { useEffect, useState } from 'react';
-import { Container, Row, Col, Spinner, Tabs, Tab } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import ProductForm from '../components/ProductForm';
-import ProductTable from '../components/ProductTable';
-import ArtistaForm from '../components/ArtistaForm';
-import ArtistaTable from '../components/ArtistaTable';
-import SelloForm from '../components/SelloForm';
-import SelloTable from '../components/SelloTable';
-import { initStorage, getProducts, addProduct, updateProduct, deleteProduct } from '../utils/MusicStorage';
+import { Container, Row, Col, Card, Spinner } from 'react-bootstrap';
 import { Auth } from '../utils/Auth';
-import Storage from '../utils/UserStorage';
+import { useNavigate } from 'react-router-dom';
+import { getProducts } from '../utils/MusicStorage';
 import '../styles/dashboard.css';
 
-/**
- * Panel de administración para gestionar productos, artistas y sellos.
- * @returns {JSX.Element}
- */
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+);
+
 export default function Dashboard() {
-  const { isLoggedIn } = Auth();
-  const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
-  const [selected, setSelected] = useState(null);
-  const [authChecked, setAuthChecked] = useState(false);
-  const [activeTab, setActiveTab] = useState('productos');
+    const [loading, setLoading] = useState(true);
+    const [metrics, setMetrics] = useState({
+        totalProducts: 0,
+        totalStock: 0,
+        avgPrice: 0,
+        lowStockCount: 0,
+        totalValue: 0,
+        topFormat: ''
+    });
 
-  // Estado de Artistas
-  const [artistas, setArtistas] = useState([]);
-  const [selectedArtista, setSelectedArtista] = useState(null);
+    useEffect(() => {
+        // Simulate fetching metrics from backend or calculate from existing endpoints
+        const loadMetrics = async () => {
+            try {
+                const products = await getProducts();
 
-  // Estado de Sellos
-  const [sellos, setSellos] = useState([]);
-  const [selectedSello, setSelectedSello] = useState(null);
+                // Calculate metrics on the fly for now
+                const totalProducts = products.length;
+                const totalStock = products.reduce((acc, p) => acc + (Number(p.stock) || 0), 0);
+                const totalPrice = products.reduce((acc, p) => acc + (Number(p.precio) || 0), 0);
+                const avgPrice = totalProducts > 0 ? (totalPrice / totalProducts).toFixed(0) : 0;
+                const lowStockCount = products.filter(p => (Number(p.stock) || 0) < 5).length;
+                const totalValue = products.reduce((acc, p) => acc + ((Number(p.precio) || 0) * (Number(p.stock) || 0)), 0);
+                console.log(products)
 
-  useEffect(() => {
-    const t = setTimeout(() => setAuthChecked(true), 50);
-    return () => clearTimeout(t);
-  }, []);
+                // Find top format and dist
+                const formats = {};
+                products.forEach(p => {
+                    const fmt = p.formato || 'Desconocido';
+                    formats[fmt] = (formats[fmt] || 0) + 1;
+                });
+                const topFormat = Object.entries(formats).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
 
-  useEffect(() => {
-    if (!authChecked) return;
-    if (!isLoggedIn) {
-      navigate('/');
-      return;
-    }
+                setMetrics({
+                    totalProducts,
+                    totalStock,
+                    avgPrice,
+                    lowStockCount,
+                    totalValue,
+                    topFormat,
+                    formats // passing full dist for graph
+                });
+            } catch (e) {
+                console.error("Error loading metrics", e);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    const load = async () => {
-      const data = await getProducts();
-      setProducts(data);
-      await loadArtistas();
-      await loadSellos();
+        loadMetrics();
+
+    }, []);
+
+
+
+    const chartData = {
+        labels: metrics.formats ? Object.keys(metrics.formats) : [],
+        datasets: [
+            {
+                label: 'Cantidad de Productos',
+                data: metrics.formats ? Object.values(metrics.formats) : [],
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1,
+            },
+        ],
     };
-    load();
-  }, [authChecked, isLoggedIn, navigate]);
 
-  // CRUD de Artistas
-  const loadArtistas = async () => {
-    try {
-      const user = Storage.getCurrentUser();
-      const res = await fetch('/api/v1/artistas', {
-        headers: { 'Authorization': user ? `Bearer ${user.token}` : '' }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setArtistas(data._embedded?.artistaList || []);
-      }
-    } catch (e) {
-      console.error('Error loading artistas:', e);
+    const chartOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Distribución por Formato',
+            },
+        },
+    };
+
+    if (loading) {
+        return (
+            <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
+                <Spinner animation="border" />
+            </Container>
+        );
     }
-  };
 
-  const handleEditArtista = (artista) => {
-    setSelectedArtista(artista);
-  };
-
-  const handleDeleteArtista = async (id) => {
-    if (!window.confirm('¿Estás seguro de eliminar este artista?')) return;
-    try {
-      const user = Storage.getCurrentUser();
-      await fetch(`/api/v1/artistas/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': user ? `Bearer ${user.token}` : '' }
-      });
-      await loadArtistas();
-    } catch (e) {
-      console.error('Error deleting artista:', e);
-      alert('Error al eliminar artista: ' + e.message);
-    }
-  };
-
-  const handleArtistaSuccess = async () => {
-    setSelectedArtista(null);
-    await loadArtistas();
-  };
-
-  // CRUD de Sellos
-  const loadSellos = async () => {
-    try {
-      const user = Storage.getCurrentUser();
-      const res = await fetch('/api/v1/sellos', {
-        headers: { 'Authorization': user ? `Bearer ${user.token}` : '' }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setSellos(data._embedded?.selloList || []);
-      }
-    } catch (e) {
-      console.error('Error loading sellos:', e);
-    }
-  };
-
-  const handleEditSello = (sello) => {
-    setSelectedSello(sello);
-  };
-
-  const handleDeleteSello = async (id) => {
-    if (!window.confirm('¿Estás seguro de eliminar este sello?')) return;
-    try {
-      const user = Storage.getCurrentUser();
-      await fetch(`/api/v1/sellos/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': user ? `Bearer ${user.token}` : '' }
-      });
-      await loadSellos();
-    } catch (e) {
-      console.error('Error deleting sello:', e);
-      alert('Error al eliminar sello: ' + e.message);
-    }
-  };
-
-  const handleSelloSuccess = async () => {
-    setSelectedSello(null);
-    await loadSellos();
-  };
-
-  // CRUD de Productos
-  const handleAddOrUpdate = async (prod) => {
-    try {
-      if (selected) {
-        await updateProduct(selected.id, prod);
-        setSelected(null);
-      } else {
-        await addProduct(prod);
-      }
-      const data = await getProducts();
-      setProducts(data);
-    } catch (e) {
-      console.error(e);
-      alert('Error al guardar producto: ' + e.message);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    if (!window.confirm('¿Estás seguro de eliminar este producto?')) return;
-    try {
-      await deleteProduct(id);
-      const data = await getProducts();
-      setProducts(data);
-    } catch (e) {
-      console.error(e);
-      alert('Error al eliminar producto: ' + e.message);
-    }
-  };
-
-  const handleEdit = (prod) => {
-    setSelected(prod);
-    setActiveTab('productos');
-  };
-
-  const handleCancel = () => {
-    setSelected(null);
-  };
-
-  if (!authChecked || !isLoggedIn) {
     return (
-      <Container className="d-flex justify-content-center align-items-center dashboard-loading-container">
-        <Spinner animation="border" />
-      </Container>
+        <Container className="py-5">
+            <h1 className="mb-4 text-center mb-5">Dashboard de Negocio</h1>
+
+            <Row className="g-4 mb-5">
+                <Col md={4}>
+                    <Card className="h-100 shadow-sm">
+                        <Card.Body className="text-center">
+                            <div className="display-4 text-primary mb-2">{metrics.totalProducts}</div>
+                            <Card.Title>Total Productos</Card.Title>
+                            <Card.Text>Productos únicos en catálogo</Card.Text>
+                        </Card.Body>
+                    </Card>
+                </Col>
+
+                <Col md={4}>
+                    <Card className="h-100 shadow-sm">
+                        <Card.Body className="text-center">
+                            <div className="display-4 text-success mb-2">{metrics.totalStock}</div>
+                            <Card.Title>Stock Total</Card.Title>
+                            <Card.Text>Unidades físicas disponibles</Card.Text>
+                        </Card.Body>
+                    </Card>
+                </Col>
+
+                <Col md={4}>
+                    <Card className="h-100 shadow-sm">
+                        <Card.Body className="text-center">
+                            <div className="display-4 text-info mb-2">${metrics.avgPrice.toLocaleString()}</div>
+                            <Card.Title>Precio Promedio</Card.Title>
+                            <Card.Text>Valor medio por unidad</Card.Text>
+                        </Card.Body>
+                    </Card>
+                </Col>
+
+                <Col md={4}>
+                    <Card className="h-100 shadow-sm bg-light">
+                        <Card.Body className="text-center">
+                            <div className="display-6 text-warning mb-2">{metrics.lowStockCount}</div>
+                            <Card.Title>Stock Bajo</Card.Title>
+                            <Card.Text>Productos con menos de 5 unidades</Card.Text>
+                        </Card.Body>
+                    </Card>
+                </Col>
+
+                <Col md={4}>
+                    <Card className="h-100 shadow-sm bg-light">
+                        <Card.Body className="text-center">
+                            <div className="display-6 text-info mb-2">${metrics.totalValue.toLocaleString()}</div>
+                            <Card.Title>Valor Inventario</Card.Title>
+                            <Card.Text>Valor total estimado (CLP)</Card.Text>
+                        </Card.Body>
+                    </Card>
+                </Col>
+
+                <Col md={4}>
+                    <Card className="h-100 shadow-sm bg-light">
+                        <Card.Body className="text-center">
+                            <div className="display-6 text-secondary mb-2">{metrics.topFormat}</div>
+                            <Card.Title>Formato Top</Card.Title>
+                            <Card.Text>Formato más común</Card.Text>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
+
+            <Row>
+                <Col md={8} className="mx-auto">
+                    <Card className="shadow-sm">
+                        <Card.Body className="carta-grafico">
+                            <Bar className="grafico" options={chartOptions} data={chartData} />
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
+        </Container>
     );
-  }
-
-  return (
-    <Container fluid className="dashboard-container py-4">
-      <h1 className="mb-4">Panel de Administración</h1>
-
-      <Tabs
-        id="dashboard-tabs"
-        activeKey={activeTab}
-        onSelect={(k) => setActiveTab(k)}
-        className="mb-3"
-      >
-        <Tab eventKey="productos" title="Productos">
-          <Row>
-            <Col md={4}>
-              <ProductForm
-                onSubmit={handleAddOrUpdate}
-                selectedProduct={selected}
-                onCancel={handleCancel}
-              />
-            </Col>
-            <Col md={8}>
-              <ProductTable
-                products={products}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            </Col>
-          </Row>
-        </Tab>
-
-        <Tab eventKey="artistas" title="Artistas">
-          <Row>
-            <Col md={4}>
-              <ArtistaForm
-                selectedArtista={selectedArtista}
-                onCancel={() => setSelectedArtista(null)}
-                onSuccess={handleArtistaSuccess}
-              />
-            </Col>
-            <Col md={8}>
-              <ArtistaTable
-                artistas={artistas}
-                onEdit={handleEditArtista}
-                onDelete={handleDeleteArtista}
-              />
-            </Col>
-          </Row>
-        </Tab>
-
-        <Tab eventKey="sellos" title="Sellos Discográficos">
-          <Row>
-            <Col md={4}>
-              <SelloForm
-                selectedSello={selectedSello}
-                onCancel={() => setSelectedSello(null)}
-                onSuccess={handleSelloSuccess}
-              />
-            </Col>
-            <Col md={8}>
-              <SelloTable
-                sellos={sellos}
-                onEdit={handleEditSello}
-                onDelete={handleDeleteSello}
-              />
-            </Col>
-          </Row>
-        </Tab>
-      </Tabs>
-    </Container>
-  );
 }

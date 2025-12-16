@@ -72,7 +72,12 @@ function Header() {
             <li><Link to="/mision">Misión</Link></li>
             <li><Link to="/vision">Visión</Link></li>
             <li><Link to="/contacto">Contacto</Link></li>
-            {isLoggedIn && currentUser?.roles?.includes('ROLE_ADMIN') && <li><Link to="/dashboard">Dashboard</Link></li>}
+            {isLoggedIn && currentUser?.roles?.includes('ROLE_ADMIN') && (
+              <>
+                <li><Link to="/admin">Admin</Link></li>
+                <li><Link to="/dashboard">Dashboard</Link></li>
+              </>
+            )}
           </ul>
         </nav>
       </div>
