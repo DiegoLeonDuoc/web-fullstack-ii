@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import CampoInput from "./CampoInput";
@@ -13,12 +13,22 @@ import {
 import Storage from '../utils/UserStorage'
 
 /**
- * Formulario de registro de usuario con validaciones en vivo.
- * @returns {JSX.Element}
+ * Formulario de registro de nuevos usuarios.
+ * 
+ * Incluye validaciones en tiempo real para:
+ * - RUT (formato y dígito verificador)
+ * - Edad (rango válido 18-120)
+ * - Email (formato)
+ * - Contraseña (complejidad)
+ * 
+ * Muestra retroalimentación visual inmediata (verde/rojo) y mensajes de advertencia.
+ * 
+ * @returns {JSX.Element} Formulario renderizado
  */
 function FormularioRegistro() {
   const navigate = useNavigate();
 
+  // Estado de los datos del formulario
   const [formData, setFormData] = useState({
     rut: "",
     age: "",
@@ -29,7 +39,7 @@ function FormularioRegistro() {
     password: "",
   });
 
-  // ---- validation state -------------------------------------------------
+  // Estado de validez de cada campo (true: válido, false: inválido, null: no tocado/vacío)
   const [valid, setValid] = useState({
     rut: null,
     age: null,
@@ -37,7 +47,7 @@ function FormularioRegistro() {
     password: null,
   });
 
-  // ---- warning messages (only for display) -----------------------------
+  // Mensajes de advertencia para mostrar al usuario cuando un campo es inválido
   const [warnings, setWarnings] = useState({
     rut: "",
     age: "",
@@ -46,13 +56,16 @@ function FormularioRegistro() {
   });
 
   // ----------------------------------------------------------------------
-  // Maneja cambios actualizando el estado del formulario
+
+  /**
+   * Actualiza el estado del formulario al modificar un input.
+   */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Recalcula banderas de validez cada vez que cambien estos campos
+  // Efecto: Recalcula la validez de los campos cada vez que cambian sus valores
   useEffect(() => {
     setValid({
       rut: formData.rut ? isRutFormat(formData.rut) && isValidRut(formData.rut) : null,
@@ -62,7 +75,7 @@ function FormularioRegistro() {
     });
   }, [formData.rut, formData.age, formData.email, formData.password]);
 
-  // Mantiene sincronizados los mensajes de advertencia con las banderas de validez
+  // Efecto: Actualiza los mensajes de advertencia basados en el estado de validez
   useEffect(() => {
     setWarnings({
       rut: valid.rut === false ? "RUT inválido o con formato incorrecto." : "",
@@ -75,26 +88,17 @@ function FormularioRegistro() {
     });
   }, [valid]);
 
+  // Determina si todo el formulario es válido para habilitar el botón de envío
   const isFormValid = valid.rut && valid.age && valid.email && valid.password;
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-
-  // If the form is somehow submitted while invalid, focus first error
-  //   if (!isFormValid) {
-  //     const firstInvalidKey = Object.keys(valid).find((k) => !valid[k]);
-  //     const el = document.getElementById(firstInvalidKey);
-  //     if (el) el.focus();
-  //     return;
-  //   }
-
-  //   console.log("Submitting:", formData);
-  //   navigate("/login");
-  // };
-  // Envío: si es válido, delega a Storage.saveUser que hashea la contraseña
+  /**
+   * Maneja el envío del formulario.
+   * Si es válido, intenta registrar al usuario en el backend/storage.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Protección adicional: si se fuerza el envío con datos inválidos, enfocar el error
     if (!isFormValid) {
       const firstInvalidKey = Object.keys(valid).find((k) => !valid[k]);
       const el = document.getElementById(firstInvalidKey);
@@ -103,14 +107,14 @@ function FormularioRegistro() {
     }
 
     try {
-      // Guardar usuario en localStorage (hash de contraseña dentro)
+      // Guardar usuario (Storage maneja la lógica de hash y persistencia)
       const result = await Storage.saveUser(formData);
 
       if (result.success) {
         console.log("Usuario registrado exitosamente:", result.user);
         navigate("/login");
       } else {
-        // Mostrar error al usuario
+        // Mostrar error retornado por la lógica de registro (ej: usuario ya existe)
         alert(result.error);
         console.error("Error en registro:", result.error);
       }
@@ -133,8 +137,8 @@ function FormularioRegistro() {
             required
             value={formData.rut}
             onChange={handleChange}
-            isInvalid={valid.rut === false}   // ← use validity directly
-            isValid={valid.rut}
+            isInvalid={valid.rut === false}   // Feedback visual rojo
+            isValid={valid.rut}               // Feedback visual verde
           />
           <AdvertenciaCampo message={warnings.rut} />
         </Col>
@@ -186,7 +190,7 @@ function FormularioRegistro() {
         </Col>
       </Row>
 
-      {/* Phone */}
+      {/* Teléfono */}
       <CampoInput
         id="phone"
         name="phone"
@@ -214,7 +218,7 @@ function FormularioRegistro() {
       />
       <AdvertenciaCampo message={warnings.email} />
 
-      {/* Password */}
+      {/* Contraseña */}
       <CampoInput
         id="password"
         name="password"
@@ -229,7 +233,7 @@ function FormularioRegistro() {
       />
       <AdvertenciaCampo message={warnings.password} />
 
-      {/* Submit */}
+      {/* Botón de envío */}
       <Button
         type="submit"
         variant="primary"

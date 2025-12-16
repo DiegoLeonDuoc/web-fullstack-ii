@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Spinner } from 'react-bootstrap';
-import { Auth } from '../utils/Auth';
-import { useNavigate } from 'react-router-dom';
 import { getProducts } from '../utils/MusicStorage';
 import '../styles/dashboard.css';
 

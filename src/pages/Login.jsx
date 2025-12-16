@@ -1,8 +1,8 @@
 // Login.js (Alternative version)
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Auth } from '../utils/Auth';
-import { isValidEmail, isValidPassword } from '../utils/Utilidades';
+import { isValidEmail } from '../utils/Utilidades';
 import Storage from '../utils/UserStorage';
 import '../styles/login.css'
 
@@ -55,7 +55,17 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Envío del formulario: llama a la API de backend
+  /**
+   * Maneja el envío del formulario de login.
+   * 
+   * Proceso:
+   * 1. Valida el formulario (email y contraseña)
+   * 2. Llama a verifyCredentials() para autenticar con el backend
+   * 3. Si es exitoso, guarda los datos del usuario en localStorage
+   * 4. Navega a la página principal
+   * 
+   * @param {Event} e - Evento del formulario
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -66,37 +76,22 @@ const Login = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password
-        })
-      });
+      // Llamar a la función de utils que maneja la autenticación
+      const userData = await Storage.verifyCredentials(
+        formData.email,
+        formData.password
+      );
 
-      if (response.ok) {
-        const data = await response.json();
-        // Guardar usuario con token y RUT
-        login({
-          email: formData.email,
-          username: data.email, // Assuming backend returns email as username or we use email for username
-          roles: data.roles,
-          token: data.token,
-          rut: data.rut // Extract and store rut
-        });
-        navigate('/'); // Navigate to home page
-      } else {
-        setErrors({
-          submit: 'Credenciales inválidas. Por favor, intenta de nuevo.'
-        });
-      }
+      // Guardar usuario en localStorage y actualizar estado global
+      login(userData);
+
+      // Navegar a la página principal
+      navigate('/');
     } catch (error) {
+      // Manejar errores de autenticación
       console.error(error);
       setErrors({
-        submit: 'Error al iniciar sesión. Por favor, intenta de nuevo.'
+        submit: error.message || 'Error al iniciar sesión. Por favor, intenta de nuevo.'
       });
     } finally {
       setIsSubmitting(false);

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap';
 import { useShoppingCart } from '../components/ShoppingCartContext';
 import { formatPrice } from '../utils/Utilidades';

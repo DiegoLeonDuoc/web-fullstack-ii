@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { useShoppingCart } from './ShoppingCartContext';
 import '../styles/shoppingcarticon.css';

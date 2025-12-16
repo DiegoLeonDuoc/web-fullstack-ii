@@ -1,11 +1,10 @@
-import React from 'react';
 import '../styles/contacto.css';
 /**
  * Página de contacto con formulario accesible.
  * @returns {JSX.Element}
  */
 function Contacto() {
-    return(
+    return (
         <section class="contact-container">
             <h2>Contáctanos</h2>
             <p class="form-note">Envíanos un mensaje. <strong>Máximo 1000 caracteres</strong>.</p>
@@ -14,14 +13,14 @@ function Contacto() {
                 <div class="form-group">
                     <label for="email">Email <span class="required">*</span></label>
                     <input type="email" id="email" name="email" class="form-control" placeholder="tu@correo.com" required></input>
-                    <div id="email-error" class="error" aria-live="polite" style={{display:'none'}}>Por favor ingresa un correo válido.</div>
+                    <div id="email-error" class="error" aria-live="polite" style={{ display: 'none' }}>Por favor ingresa un correo válido.</div>
                 </div>
 
                 <div class="form-group">
                     <label for="message">Mensaje <span class="required">*</span></label>
                     <textarea id="message" name="message" class="form-control" maxlength="1000" placeholder="Escribe tu mensaje aquí..." required></textarea>
                     <div class="d-flex justify-content-between align-items-center mt-2">
-                        <div id="message-error" class="error" style={{display:'none'}}>El mensaje no puede estar vacío.</div>
+                        <div id="message-error" class="error" style={{ display: 'none' }}>El mensaje no puede estar vacío.</div>
                         <div class="char-count" id="char-count">0 / 1000</div>
                     </div>
                 </div>

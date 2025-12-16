@@ -1,9 +1,19 @@
 import { useState, useEffect } from 'react';
 import { Form, Button, Card, Alert } from 'react-bootstrap';
-import Storage from '../utils/UserStorage';
+import { addArtista, updateArtista } from '../utils/ArtistaStorage';
 
 /**
- * Formulario para agregar/editar artistas
+ * Formulario para la gestión de Artistas.
+ * 
+ * Permite crear nuevos artistas o editar existentes.
+ * Utiliza funciones de `ArtistaStorage.js` para la comunicación con la API.
+ * Filtra propiedades no deseadas (como _links) al cargar datos de HATEOAS.
+ * 
+ * @param {Object} props
+ * @param {Object} [props.selectedArtista] - Objeto artista a editar (null para crear).
+ * @param {() => void} props.onCancel - Callback para cancelar la operación.
+ * @param {() => void} props.onSuccess - Callback ejecutado tras un guardado exitoso.
+ * @returns {JSX.Element} Formulario renderizado
  */
 export default function ArtistaForm({ selectedArtista, onCancel, onSuccess }) {
     const [formData, setFormData] = useState({
@@ -13,6 +23,7 @@ export default function ArtistaForm({ selectedArtista, onCancel, onSuccess }) {
     const [message, setMessage] = useState(null);
     const [loading, setLoading] = useState(false);
 
+    // Efecto para cargar datos si se está editando
     useEffect(() => {
         if (selectedArtista) {
             setFormData({
@@ -29,40 +40,40 @@ export default function ArtistaForm({ selectedArtista, onCancel, onSuccess }) {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    /**
+     * Envía los datos del formulario a la API.
+     * Determina si es creación o actualización basándose en `selectedArtista`.
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setMessage(null);
 
         try {
-            const user = Storage.getCurrentUser();
-            const url = selectedArtista
-                ? `/api/v1/artistas/${selectedArtista.id}`
-                : '/api/v1/artistas';
-            const method = selectedArtista ? 'PUT' : 'POST';
-
-            const response = await fetch(url, {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': user ? `Bearer ${user.token}` : ''
-                },
-                body: JSON.stringify(formData)
-            });
-
-            if (response.ok) {
+            if (selectedArtista) {
+                // Modo Edición
+                await updateArtista(selectedArtista.id, formData);
                 setMessage({
                     type: 'success',
-                    text: selectedArtista ? 'Artista actualizado exitosamente' : 'Artista agregado exitosamente'
+                    text: 'Artista actualizado exitosamente'
                 });
-                setFormData({ nombreArtista: '', paisOrigen: '' });
-                if (onSuccess) onSuccess();
             } else {
-                const errorData = await response.json().catch(() => ({}));
-                setMessage({ type: 'danger', text: errorData.message || 'Error al guardar artista' });
+                // Modo Creación
+                await addArtista(formData);
+                setMessage({
+                    type: 'success',
+                    text: 'Artista agregado exitosamente'
+                });
             }
+
+            // Limpiar formulario y notificar éxito
+            setFormData({ nombreArtista: '', paisOrigen: '' });
+            if (onSuccess) onSuccess();
         } catch (error) {
-            setMessage({ type: 'danger', text: 'Error de conexión: ' + error.message });
+            setMessage({
+                type: 'danger',
+                text: error.message || 'Error al guardar artista'
+            });
         } finally {
             setLoading(false);
         }
@@ -72,11 +83,14 @@ export default function ArtistaForm({ selectedArtista, onCancel, onSuccess }) {
         <Card className="mb-3">
             <Card.Body>
                 <Card.Title>{selectedArtista ? 'Editar Artista' : 'Agregar Artista'}</Card.Title>
+
+                {/* Mensajes de retroalimentación (éxito/error) */}
                 {message && (
                     <Alert variant={message.type} dismissible onClose={() => setMessage(null)}>
                         {message.text}
                     </Alert>
                 )}
+
                 <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-2">
                         <Form.Label>Nombre del Artista</Form.Label>
@@ -88,6 +102,7 @@ export default function ArtistaForm({ selectedArtista, onCancel, onSuccess }) {
                             required
                         />
                     </Form.Group>
+
                     <div className="d-flex gap-2">
                         <Button variant="primary" type="submit" disabled={loading}>
                             {loading ? 'Guardando...' : (selectedArtista ? 'Actualizar' : 'Agregar')}

@@ -1,4 +1,3 @@
-import React from "react";
 import { Form } from "react-bootstrap";
 import '../styles/campos.css';
 
@@ -29,15 +28,15 @@ function CampoInput({
   value,
   onChange,
   isInvalid,
-  isValid, 
+  isValid,
 }) {
-//     console.log(
-//     `[CampoInput] ${id} – value: "${value}" | isInvalid: ${isInvalid} | isValid: ${isValid}`
-//   );
+  //     console.log(
+  //     `[CampoInput] ${id} – value: "${value}" | isInvalid: ${isInvalid} | isValid: ${isValid}`
+  //   );
   return (
-    <Form.Group controlId={id} style={{marginBottom: '0.8rem'}}>
+    <Form.Group controlId={id} style={{ marginBottom: '0.8rem' }}>
       <Form.Label>{label}</Form.Label>
-      <Form.Control 
+      <Form.Control
         className='campo'
         type={type}
         name={name}

@@ -1,6 +1,6 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import SidebarFiltros, { toFilterCriteria } from '../components/SidebarFiltros';
+import SidebarFiltros from '../components/SidebarFiltros';
 import TarjetaProducto from '../components/TarjetaProducto';
 import { filterProducts } from '../utils/Filters';
 import { getProducts } from '../utils/MusicStorage';

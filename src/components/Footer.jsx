@@ -1,10 +1,17 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import EconomicIndicators from './EconomicIndicators';
 
 /**
- * Pie de página del sitio con enlaces y formulario de contacto simple.
- * @returns {JSX.Element}
+ * Componente Pie de Página (Footer).
+ * 
+ * Muestra información estática del sitio, enlaces rápidos y formulario de contacto.
+ * Integra el componente de indicadores económicos.
+ * 
+ * Estructura:
+ * - Izquierda: Logo, enlaces de navegación, copyright e indicadores económicos.
+ * - Derecha: Formulario de contacto rápido.
+ * 
+ * @returns {JSX.Element} Footer renderizado
  */
 function Footer() {
   return (
@@ -19,6 +26,7 @@ function Footer() {
         </p>
         <p className="footer-company-name"> Beat Bazar © 2025 </p>
 
+        {/* Muestra indicadores económicos de mindicador.cl */}
         <EconomicIndicators />
 
         <div className="footer-iconos mt-3">

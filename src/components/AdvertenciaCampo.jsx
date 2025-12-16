@@ -1,5 +1,3 @@
-import React from "react";
-
 /**
  * Muestra un mensaje de advertencia debajo de un campo si existe.
  * @param {Object} props

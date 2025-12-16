@@ -7,9 +7,9 @@ import ArtistaForm from '../components/ArtistaForm';
 import ArtistaTable from '../components/ArtistaTable';
 import SelloForm from '../components/SelloForm';
 import SelloTable from '../components/SelloTable';
-import { initStorage, getProducts, addProduct, updateProduct, deleteProduct } from '../utils/MusicStorage';
-import { Auth } from '../utils/Auth';
-import Storage from '../utils/UserStorage';
+import { getProducts, addProduct, updateProduct, deleteProduct } from '../utils/MusicStorage';
+import { getArtistas, deleteArtista } from '../utils/ArtistaStorage';
+import { getSellos, deleteSello } from '../utils/SelloStorage';
 import '../styles/admin.css';
 
 /**
@@ -51,17 +51,16 @@ export default function Admin() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteData, setDeleteData] = useState({ type: null, id: null, name: '' });
 
-  // CRUD de Artistas
+  // ========== CRUD de Artistas ==========
+
+  /**
+   * Carga la lista de artistas desde el backend.
+   * Usa la función centralizada de ArtistaStorage.
+   */
   const loadArtistas = async () => {
     try {
-      const user = Storage.getCurrentUser();
-      const res = await fetch('/api/v1/artistas', {
-        headers: { 'Authorization': user ? `Bearer ${user.token}` : '' }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setArtistas(data._embedded?.artistaList || []);
-      }
+      const data = await getArtistas();
+      setArtistas(data);
     } catch (e) {
       console.error('Error loading artistas:', e);
     }
@@ -76,13 +75,13 @@ export default function Admin() {
     setShowDeleteModal(true);
   };
 
+  /**
+   * Elimina un artista usando la función de utilidad.
+   * Actualiza la lista después de eliminar.
+   */
   const handleDeleteArtista = async () => {
     try {
-      const user = Storage.getCurrentUser();
-      await fetch(`/api/v1/artistas/${deleteData.id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': user ? `Bearer ${user.token}` : '' }
-      });
+      await deleteArtista(deleteData.id);
       await loadArtistas();
       setShowDeleteModal(false);
     } catch (e) {
@@ -96,17 +95,16 @@ export default function Admin() {
     await loadArtistas();
   };
 
-  // CRUD de Sellos
+  // ========== CRUD de Sellos ==========
+
+  /**
+   * Carga la lista de sellos desde el backend.
+   * Usa la función centralizada de SelloStorage.
+   */
   const loadSellos = async () => {
     try {
-      const user = Storage.getCurrentUser();
-      const res = await fetch('/api/v1/sellos', {
-        headers: { 'Authorization': user ? `Bearer ${user.token}` : '' }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setSellos(data._embedded?.selloList || []);
-      }
+      const data = await getSellos();
+      setSellos(data);
     } catch (e) {
       console.error('Error loading sellos:', e);
     }
@@ -121,13 +119,13 @@ export default function Admin() {
     setShowDeleteModal(true);
   };
 
+  /**
+   * Elimina un sello usando la función de utilidad.
+   * Actualiza la lista después de eliminar.
+   */
   const handleDeleteSello = async () => {
     try {
-      const user = Storage.getCurrentUser();
-      await fetch(`/api/v1/sellos/${deleteData.id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': user ? `Bearer ${user.token}` : '' }
-      });
+      await deleteSello(deleteData.id);
       await loadSellos();
       setShowDeleteModal(false);
     } catch (e) {

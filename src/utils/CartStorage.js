@@ -1,9 +1,14 @@
-// CartStorage.js — Implementación solo Backend
+// CartStorage.js — Gestión del Carrito (Implementación Backend)
+// Maneja todas las operaciones del carrito sincronizadas con el servidor
+
 import Storage from './UserStorage';
 
 const API_URL = '/api/v1/carritos';
 
-// Helper para obtener headers con token
+/**
+ * Helper interno para obtener headers con token de autenticación.
+ * @returns {Object} Headers HTTP con Content-Type y Authorization
+ */
 const getHeaders = () => {
   const user = Storage.getCurrentUser();
   return {
@@ -12,11 +17,20 @@ const getHeaders = () => {
   };
 };
 
-// Mapper Backend -> Frontend (async para fetch de productos)
+/**
+ * Transforma el carrito del backend al formato usado por el frontend.
+ * 
+ * El backend retorna una lista de items con SKU y cantidad.
+ * Esta función enriquece cada item buscando sus detalles (título, precio, img)
+ * en la API de productos.
+ * 
+ * @param {Object} backendCart - Objeto carrito retornado por la API
+ * @returns {Promise<Array<Object>>} Lista de items enriquecida con detalles de producto
+ */
 const mapBackendCart = async (backendCart) => {
   if (!backendCart || !backendCart.itemsCarrito) return [];
 
-  // Obtener detalles del producto para cada ítem
+  // Obtener detalles del producto para cada ítem en paralelo
   const itemsWithDetails = await Promise.all(
     backendCart.itemsCarrito.map(async (item) => {
       try {
@@ -31,13 +45,13 @@ const mapBackendCart = async (backendCart) => {
             img: product.urlImagen,
             formato: product.nombreFormato,
             artista: product.artista ? product.artista.nombreArtista : 'Desconocido',
-            stock: product.cantidadStock || 0 // Agregar stock disponible
+            stock: product.cantidadStock || 0
           };
         }
       } catch (e) {
         console.error(`Error fetching product ${item.sku}:`, e);
       }
-      // Fallback si falla la obtención del producto
+      // Fallback: si falla la obtención del producto, mostrar placeholder
       return {
         id: item.sku,
         qty: item.cantidad,
@@ -54,28 +68,38 @@ const mapBackendCart = async (backendCart) => {
   return itemsWithDetails;
 };
 
-// Carga el carrito desde backend
+/**
+ * Carga el carrito del usuario actual desde el backend.
+ * 
+ * Requiere que el usuario esté logueado (tenga token y RUT).
+ * 
+ * @returns {Promise<Array<Object>>} Lista de productos en el carrito
+ */
 export async function loadCart() {
   const user = Storage.getCurrentUser();
-  console.log(user);
+
   if (user && user.token && user.rut) {
     try {
+      // GET /api/v1/carritos/{rut}
       const res = await fetch(`${API_URL}/${user.rut}`, { headers: getHeaders() });
       if (res.ok) {
         const data = await res.json();
-        //console.log(data)
-        console.log('Loaded cart from backend:', data);
         return await mapBackendCart(data);
       }
     } catch (e) {
       console.error('Error loading cart from backend:', e);
     }
   }
-  console.log('No user logged in, returning empty cart');
   return [];
 }
 
-// Agrega un producto al carrito
+/**
+ * Agrega un producto al carrito o incrementa su cantidad.
+ * 
+ * @param {Object} product - Producto a agregar (debe tener id/sku)
+ * @param {number} qty - Cantidad a agregar (por defecto 1)
+ * @returns {Promise<Array<Object>>} Nuevo estado del carrito
+ */
 export async function addToCart(product, qty = 1) {
   const user = Storage.getCurrentUser();
 
@@ -85,17 +109,15 @@ export async function addToCart(product, qty = 1) {
   }
 
   try {
-    console.log(`Agregando producto ${product.id} al carrito para usuario ${user.rut}`);
+    // POST /api/v1/carritos/{rut}/items
     const res = await fetch(`${API_URL}/${user.rut}/items`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify({ sku: product.id, cantidad: qty })
     });
-    console.log(res);
+
     if (res.ok) {
       const cart = await res.json();
-      console.log(cart);
-      console.log('Cart after add:', cart);
       return await mapBackendCart(cart);
     } else {
       console.error('Fallo al agregar al carrito:', res.status);
@@ -107,24 +129,30 @@ export async function addToCart(product, qty = 1) {
   return [];
 }
 
-// Actualiza la cantidad de un producto
+/**
+ * Actualiza la cantidad de un producto específico en el carrito.
+ * 
+ * @param {string} productId - SKU del producto
+ * @param {number} qty - Nueva cantidad (mínimo 1)
+ * @returns {Promise<Array<Object>>} Nuevo estado del carrito
+ */
 export async function updateItemQty(productId, qty) {
   const user = Storage.getCurrentUser();
   const newQty = Math.max(1, Number(qty));
 
   if (!user || !user.token || !user.rut) {
-    console.error('Usuario no logueado, no se puede actualizar carrito');
     return [];
   }
 
   try {
-    // Obtener carrito para buscar ID del item
+    // 1. Obtener carrito actual para buscar ID interno del item
     const cartRes = await fetch(`${API_URL}/${user.rut}`, { headers: getHeaders() });
     if (cartRes.ok) {
       const cartData = await cartRes.json();
       const item = cartData.itemsCarrito.find(i => i.sku === productId);
 
       if (item) {
+        // 2. PUT /api/v1/carritos/{rut}/items/{itemId}
         const res = await fetch(`${API_URL}/${user.rut}/items/${item.id}`, {
           method: 'PUT',
           headers: getHeaders(),
@@ -143,23 +171,28 @@ export async function updateItemQty(productId, qty) {
   return [];
 }
 
-// Elimina un producto del carrito
+/**
+ * Elimina un producto del carrito.
+ * 
+ * @param {string} productId - SKU del producto a eliminar
+ * @returns {Promise<Array<Object>>} Nuevo estado del carrito
+ */
 export async function removeItem(productId) {
   const user = Storage.getCurrentUser();
 
   if (!user || !user.token || !user.rut) {
-    console.error('Usuario no logueado, no se puede eliminar del carrito');
     return [];
   }
 
   try {
-    // Obtener carrito para buscar ID del item
+    // 1. Obtener carrito para buscar ID interno
     const cartRes = await fetch(`${API_URL}/${user.rut}`, { headers: getHeaders() });
     if (cartRes.ok) {
       const cartData = await cartRes.json();
       const item = cartData.itemsCarrito.find(i => i.sku === productId);
 
       if (item) {
+        // 2. DELETE /api/v1/carritos/{rut}/items/{itemId}
         const res = await fetch(`${API_URL}/${user.rut}/items/${item.id}`, {
           method: 'DELETE',
           headers: getHeaders()
@@ -177,13 +210,23 @@ export async function removeItem(productId) {
   return [];
 }
 
-// Obtiene la cantidad total de productos (para badge)
+/**
+ * Calcula la cantidad total de items en el carrito (para el badge).
+ * 
+ * @param {Array} cart - Estado actual del carrito
+ * @returns {number} Suma de cantidades
+ */
 export function getCartCount(cart) {
   if (!cart) return 0;
   return cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
 }
 
-// Obtiene el total en CLP
+/**
+ * Calcula el precio total del carrito.
+ * 
+ * @param {Array} cart - Estado actual del carrito
+ * @returns {number} Suma total en CLP
+ */
 export function getCartTotal(cart) {
   if (!cart) return 0;
   return cart.reduce((sum, item) => {
@@ -192,7 +235,9 @@ export function getCartTotal(cart) {
   }, 0);
 }
 
-// Placeholder para compatibilidad (no usado en backend-only)
+/**
+ * @deprecated Función legacy para compatibilidad. Retorna siempre vacío.
+ */
 export function getLocalCart() {
   return [];
 }

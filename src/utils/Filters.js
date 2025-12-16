@@ -1,14 +1,24 @@
-// Utilidades de filtrado para productos
+// Filters.js — Utilidades de filtrado y transformación para productos
 
-// Convierte precios como "$18.990" o "12.990" a número 18990/12990
 /**
- * Convierte un precio con formato de string a número entero de pesos.
- * @param {string|number|null|undefined} precio - Precio a convertir (puede incluir símbolos y puntos).
- * @returns {number} Valor numérico del precio, o NaN si no es posible convertir.
+ * Normaliza y convierte un precio al formato numérico.
+ * 
+ * Elimina cualquier caracter no numérico (comas, puntos, símbolos de moneda)
+ * y devuelve un entero. Útil para limpiar inputs o datos sucios.
+ * 
+ * Ejemplos:
+ * - "$18.990" -> 18990
+ * - "12.990" -> 12990
+ * - "USD 50" -> 50
+ * 
+ * @param {string|number|null|undefined} precio - Precio a convertir
+ * @returns {number} Valor numérico del precio, o NaN si la entrada es inválida
  */
 export function parsePrecio(precio) {
   if (precio == null) return NaN;
+  // Elimina todo lo que no sea dígito
   const onlyDigits = String(precio).replace(/[^0-9]/g, '');
+  // Parsea en base 10
   return onlyDigits ? parseInt(onlyDigits, 10) : NaN;
 }
 
@@ -22,17 +32,30 @@ export function parsePrecio(precio) {
 //   minRating?: number
 // }
 /**
- * Filtra una lista de productos según criterios opcionales.
- * @param {Array<Object>} productos - Lista de productos a filtrar.
- * @param {Object} [criteria] - Criterios de filtrado.
- * @param {number} [criteria.minPrecio]
- * @param {number} [criteria.maxPrecio]
- * @param {string|string[]} [criteria.formato]
- * @param {string|string[]} [criteria.artista]
- * @param {number|number[]} [criteria.anio] - Año o rango [min, max].
- * @param {string|string[]} [criteria.etiqueta]
- * @param {number} [criteria.minRating]
- * @returns {Array<Object>} Productos que cumplen los criterios.
+ * Filtra una colección de productos basándose en múltiples criterios simultáneos.
+ * 
+ * Implementa una lógica de filtrado "AND" entre diferentes criterios,
+ * pero "OR" dentro de criterios de selección múltiple (arrays).
+ * 
+ * Criterios soportados:
+ * - Rango de precios (min/max)
+ * - Formato (búsqueda parcial, insensible a mayúsculas)
+ * - Artista (búsqueda exacta)
+ * - Año (rango [min, max] o valor exacto)
+ * - Etiqueta/Sello (búsqueda exacta)
+ * - Calificación mínima (rating)
+ * 
+ * @param {Array<Object>} productos - Lista original de productos
+ * @param {Object} [criteria] - Objeto de configuración de filtros
+ * @param {number} [criteria.minPrecio] - Precio mínimo
+ * @param {number} [criteria.maxPrecio] - Precio máximo
+ * @param {string|string[]} [criteria.formato] - Uno o más formatos permitidos
+ * @param {string|string[]} [criteria.artista] - Uno o más artistas permitidos
+ * @param {number|number[]} [criteria.anio] - Año exacto o rango [min, max]
+ * @param {string|string[]} [criteria.etiqueta] - Una o más etiquetas permitidas
+ * @param {number} [criteria.minRating] - Calificación mínima requerida (0-5)
+ * 
+ * @returns {Array<Object>} Subconjunto de productos que cumplen TODOS los criterios
  */
 export function filterProducts(productos, criteria = {}) {
   if (!Array.isArray(productos)) return [];
@@ -100,9 +123,14 @@ export function filterProducts(productos, criteria = {}) {
 }
 
 /**
- * Normaliza un valor a arreglo.
- * @param {any} val - Valor a normalizar.
- * @returns {any[]} Arreglo (vacío si null/undefined).
+ * Helper interno: Normaliza cualquier valor a un array.
+ * 
+ * - null/undefined -> []
+ * - array -> array original
+ * - valor único -> [valor]
+ * 
+ * @param {any} val - Valor a normalizar
+ * @returns {Array} Array resultante
  */
 function normalizeToArray(val) {
   if (val == null) return [];

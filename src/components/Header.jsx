@@ -1,26 +1,38 @@
 // Header.js
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Auth } from '../utils/Auth';
 import ShoppingCartIcon from './ShoppingCartIcon';
-// import Storage removed: no longer showing password hash
 
 /**
- * Encabezado principal con navegación, búsqueda y usuario/sesión.
- * @returns {JSX.Element}
+ * Componente de encabezado global de la aplicación.
+ * 
+ * Funcionalidades principales:
+ * 1. Navegación principal (Inicio, Catálogo, etc.)
+ * 2. Gestión de sesión de usuario (Login/Logout)
+ * 3. Menu de administración (visible solo para roles ADMIN)
+ * 4. Carrito de compras y búsqueda
+ * 5. Menú responsivo para móviles
+ * 
+ * @returns {JSX.Element} Elemento header renderizado
  */
 function Header() {
   const navigate = useNavigate();
+  // Hook personalizado de autenticación para obtener estado y funciones
   const { isLoggedIn, currentUser, logout } = Auth();
+
+  // Estados para controlar la visibilidad de menús desplegables
   const [showMenu, setShowMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
+  // Derivar el nombre a mostrar (Nombre completo > Email > 'Usuario')
   const displayName = currentUser
     ? ([currentUser.firstName, currentUser.lastName].filter(Boolean).join(' ').trim()
       || currentUser.email
       || 'Usuario')
     : '';
 
+  // Calcular iniciales para el avatar de usuario
   const avatarInitials = (() => {
     const initials =
       `${currentUser?.firstName?.charAt(0) || ''}${currentUser?.lastName?.charAt(0) || ''}`.trim();
@@ -29,38 +41,40 @@ function Header() {
     return null;
   })();
 
-  // Escuchar cambios de autenticación
+  // Efecto para sincronizar cambios de autenticación entre pestañas/componentes
   useEffect(() => {
     const handleAuthChange = () => {
-      // Esto forzará el rerender del componente
+      // Forzar re-render cuando cambia el estado de auth (login/logout en otra pestaña)
       window.dispatchEvent(new Event('forceUpdate'));
     };
 
     window.addEventListener('authStateChanged', handleAuthChange);
-
     return () => {
       window.removeEventListener('authStateChanged', handleAuthChange);
     };
   }, []);
 
-  // Hash visualization removed
-
+  /**
+   * Maneja el cierre de sesión del usuario.
+   * Limpia el almacenamiento y redirige al inicio.
+   */
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
+  /**
+   * Navegación rápida a categorías desde el menú móvil.
+   * @param {string} formato - Formato a filtrar (CD, Vinilo)
+   */
   const goCategoria = (formato) => {
     setShowMenu(false);
     navigate(`/catalogo?formato=${encodeURIComponent(formato)}`);
   }
 
-  const getInitials = (firstName, lastName) => {
-    return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
-  };
-
   return (
     <header className="header-component" role="banner">
+      {/* Sección Izquierda: Logo y Navegación Principal */}
       <div className="header-left">
         <Link to="/" className="logo">
           <img src="/favicon.ico" alt="Beat Bazaar logo" />
@@ -72,6 +86,7 @@ function Header() {
             <li><Link to="/mision">Misión</Link></li>
             <li><Link to="/vision">Visión</Link></li>
             <li><Link to="/contacto">Contacto</Link></li>
+            {/* Enlaces exclusivos para administradores */}
             {isLoggedIn && currentUser?.roles?.includes('ROLE_ADMIN') && (
               <>
                 <li><Link to="/admin">Admin</Link></li>
@@ -82,7 +97,9 @@ function Header() {
         </nav>
       </div>
 
+      {/* Sección Derecha: Búsqueda, Carrito y Usuario */}
       <div className="header-right">
+        {/* Menú Móvil (Hamburguesa) */}
         <div className="me-3 header-dropdown-container">
           <button
             type="button"
@@ -99,11 +116,16 @@ function Header() {
             </div>
           )}
         </div>
+
+        {/* Barra de Búsqueda */}
         <div className="search-bar" role="search">
           <input type="text" placeholder="Buscar producto..." aria-label="Buscar producto" />
           <button type="button">Buscar</button>
         </div>
+
         <ShoppingCartIcon />
+
+        {/* Menú de Usuario */}
         <div className="user-account">
           {isLoggedIn ? (
             <div className="user-menu header-dropdown-container">
@@ -119,6 +141,8 @@ function Header() {
                   <i className="fa fa-user" aria-hidden="true"></i>
                 )}
               </button>
+
+              {/* Dropdown de Usuario */}
               {showUserMenu && (
                 <div className="dropdown-menu show user-menu-dropdown">
                   <div className="px-3 py-2 border-bottom">

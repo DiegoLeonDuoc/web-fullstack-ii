@@ -1,8 +1,6 @@
 // src/pages/Home.js
-import React from 'react';
 import FilaDeProductos from '../components/FilaDeProductos';
 import { getProducts } from '../utils/MusicStorage';
-//import { get_api_prod } from '../utils/MusicStorage';
 import { useState, useEffect } from 'react';
 /**
  * Página de inicio con productos recomendados.

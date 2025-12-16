@@ -1,24 +1,29 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
 
-// props:
-// - productos: array para derivar opciones (artistas, etiquetas, años)
-// - initial: criterios iniciales
-// - onChange: (criteria) => void
 /**
  * Barra lateral de filtros para el catálogo de productos.
- * Notifica cambios vía onChange con criterios listos para filtrar.
+ * 
+ * Permite filtrar productos por múltiples criterios:
+ * - Precio (mínimo y máximo)
+ * - Formato (CD, Vinilo)
+ * - Artista (lista dinámica basada en productos disponibles)
+ * - Rango de años de lanzamiento
+ * - Etiquetas/Sellos (lista dinámica)
+ * - Calificación mínima
+ * 
  * @param {Object} props
- * @param {Array<Object>} [props.productos=[]] - Productos base para opciones.
- * @param {Object} [props.initial={}] - Criterios iniciales (desde URL u otros).
- * @param {(criteria: Object) => void} props.onChange - Callback con criterios para filtrar.
- * @returns {JSX.Element}
+ * @param {Array<Object>} [props.productos=[]] - Lista completa de productos para extraer opciones de filtrado.
+ * @param {Object} [props.initial={}] - Criterios iniciales (e.g. desde parámetros de URL).
+ * @param {(criteria: Object) => void} props.onChange - Callback que se ejecuta cuando cambian los filtros.
+ * @returns {JSX.Element} Panel de filtros
  */
 export default function SidebarFiltros({ productos = [], initial = {}, onChange }) {
+  // Estado local que mantiene los valores de los inputs del filtro
   const [criteria, setCriteria] = useState({
     minPrecio: '',
     maxPrecio: '',
-    formato: [],
+    formato: [],      // Array para permitir selección múltiple
     artista: '',
     anioMin: '',
     anioMax: '',
@@ -27,14 +32,15 @@ export default function SidebarFiltros({ productos = [], initial = {}, onChange 
     ...normalizeInitial(initial),
   });
 
-  // Notificar cambios de criterios (no dependemos de la identidad de onChange)
+  // Efecto que notifica al componente padre cuando cambian los criterios
   useEffect(() => {
     if (typeof onChange === 'function') {
+      // Transforma el estado interno al formato esperado por la utilidad de filtrado
       onChange(toFilterCriteria(criteria));
     }
   }, [criteria]);
 
-  // Si cambian presets iniciales (por querystring), sincroniza el estado local una vez
+  // Si los criterios iniciales cambian externamente (ej: navegación), sincroniza el estado
   useEffect(() => {
     if (initial && Object.keys(initial).length > 0) {
       setCriteria((prev) => ({ ...prev, ...normalizeInitial(initial) }));
@@ -42,8 +48,13 @@ export default function SidebarFiltros({ productos = [], initial = {}, onChange 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initial]);
 
+  // Memoriza las opciones derivadas de la lista de productos para evitar costosos recálculos
   const opciones = useMemo(() => buildOptions(productos), [productos]);
 
+  /**
+   * Alterna la selección de un formato (checkbox logic).
+   * @param {string} value - Formato a alternar ('CD', 'Vinilo')
+   */
   const toggleFormato = (value) => {
     setCriteria((prev) => {
       const set = new Set(prev.formato);
@@ -52,11 +63,17 @@ export default function SidebarFiltros({ productos = [], initial = {}, onChange 
     });
   };
 
+  /**
+   * Manejador genérico para inputs de texto y select.
+   */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCriteria((prev) => ({ ...prev, [name]: value }));
   };
 
+  /**
+   * Restablece todos los filtros a su estado vacío.
+   */
   const handleReset = () => {
     setCriteria({
       minPrecio: '',
@@ -156,7 +173,7 @@ export default function SidebarFiltros({ productos = [], initial = {}, onChange 
         <Form.Label htmlFor="minRating">Rating mínimo</Form.Label>
         <Form.Select name="minRating" id="minRating" value={criteria.minRating} onChange={handleChange}>
           <option value="">Cualquiera</option>
-          {[5,4.5,4,3.5,3].map((r) => (
+          {[5, 4.5, 4, 3.5, 3].map((r) => (
             <option key={r} value={r}>{r}+</option>
           ))}
         </Form.Select>
